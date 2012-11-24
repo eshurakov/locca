@@ -1,0 +1,6 @@
+= Locca
+
+Describe your project here
+
+:include:Locca.rdoc
+
