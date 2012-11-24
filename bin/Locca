@@ -12,36 +12,25 @@ desc 'Verbose'
 switch [:v,:verbose]
 
 desc 'Localization configs dir'
-default_value '.locca'
 arg_name '<path>'
-flag ["locca-dir".to_sym]
+flag ['locca-dir'.to_sym]
+
+desc 'Work dir'
+arg_name '<path>'
+flag ['work-dir'.to_sym]
 
 desc 'Initialize project'
 command :init do |c|
-
 	c.action do |global_options,options,args|
-
-		puts "init command ran"
+		exit_now!("Init is not implemented")
 	end
 end
 
 desc 'Create and update language files from source code'
 arg_name 'Describe arguments to build here'
 command :build do |c|
-	c.desc 'Describe a switch to build'
-	c.switch :s
-
-	c.desc 'Describe a flag to build'
-	c.default_value 'default'
-	c.flag :f
 	c.action do |global_options,options,args|
-
-		# Your command logic here
-		 
-		# If you have any errors, just raise them
-		# raise "that command made no sense"
-
-		puts "build command ran"
+		$locca.build()
 	end
 end
 
@@ -49,23 +38,20 @@ desc 'Synchronize changes with server'
 arg_name 'Describe arguments to sync here'
 command :sync do |c|
 	c.action do |global_options,options,args|
-		puts "sync command ran"
+		exit_now!("Sync is not implemented")
 	end
 end
 
 desc 'Translate files'
 command :translate do |c|
 	c.action do |global_options,options,args|
-		puts "translate command ran"
+		exit_now!("Translate is not implemented")
 	end
 end
 
 pre do |global,command,options,args|
-	# Pre logic here
-	# Return true to proceed; false to abourt and not call the
-	# chosen command
-	# Use skips_pre before a command to skip this block
-	# on that command only
+	$locca = Locca::Locca.new(global['work-dir'.to_sym], global['locca-dir'.to_sym])
+
 	true
 end
 
