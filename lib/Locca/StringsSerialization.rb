@@ -37,8 +37,25 @@ module Locca
 		 	end
 		end
 
-		def self.dataWithStringsObject(stringsObj)
+		def self.writeStringsObjectToFileAtPath(stringsObj, filepath)
+			if not filepath
+				raise ArgumentException, 'filepath can\'t be nil'
+			end
 
+			FileUtils.mkdir_p(File.dirname(filepath))
+			
+			File.open(filepath, "wb") do |io|
+				stringsObj.sortedEach do |key, arr|
+					key = key.gsub(/([^\\])"/, "\\1\\\"")
+					value = arr[:value].gsub(/([^\\])"/, "\\1\\\"")
+					comment = arr[:comment]
+
+					io << "/* #{comment} */\n" if comment
+					io << "\"#{key}\" = \"#{value}\";\n"
+					io << "\n"
+
+				end
+			end
 		end
 	end
 end

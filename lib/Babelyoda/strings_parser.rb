@@ -22,22 +22,22 @@ module Babelyoda
     def produce(bs)
       match_bs(bs, :multiline_comment, :string, :equal_sign, :string, :semicolon) do |bits|
         result = {}
-        result[:key] = cleanup_string(bits[1])
-        result[:comment] = cleanup_comment(bits[0])
-        result[:value] = cleanup_string(bits[3])
+        result[:key] = bits[1]
+        result[:comment] = bits[0]
+        result[:value] = bits[3]
         return result
       end
       match_bs(bs, :singleline_comment, :string, :equal_sign, :string, :semicolon) do |bits|
         result = {}
-        result[:key] = cleanup_string(bits[1])
-        result[:comment] = cleanup_comment(bits[0])
-        result[:value] = cleanup_string(bits[3])
+        result[:key] = bits[1]
+        result[:comment] = bits[0]
+        result[:value] = bits[3]
         return result
       end
-      match_bs(bs, :string, :equal_sign, :string, :semicolon) do |bits|
+      match_bs(bs, :string, :equal_sign, :string, :semicolon) do |bits|        
         result = {}
-        result[:key] = cleanup_string(bits[0])
-        result[:value] = cleanup_string(bits[2])
+        result[:key] = bits[0]
+        result[:value] = bits[2]
         return result
       end
       match_bs(bs, :singleline_comment) do |bits|
