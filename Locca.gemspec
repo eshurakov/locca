@@ -7,11 +7,19 @@ spec = Gem::Specification.new do |s|
   s.email = 'inbox@shurakov.name'
   s.homepage = 'http://shurakov.name'
   s.platform = Gem::Platform::RUBY
-  s.summary = 'A description of your project'
+  s.summary = 'Application localization kit'
 # Add your other files here if you make them
   s.files = %w(
-	bin/Locca
-	lib/Locca/version.rb
+	bin/locca
+  lib/Babelyoda/strings_lexer.rb
+  lib/Babelyoda/strings_parser.rb
+	lib/Locca/Config.rb
+  lib/Locca/Genstrings.rb
+  lib/Locca/Keyset.rb
+  lib/Locca/Strings.rb
+  lib/Locca/StringsMerger.rb
+  lib/Locca/StringsSerialization.rb
+  lib/Locca/version.rb
 	lib/Locca.rb
   )
   s.require_paths << 'lib'
@@ -19,7 +27,7 @@ spec = Gem::Specification.new do |s|
   s.extra_rdoc_files = ['README.rdoc','Locca.rdoc']
   s.rdoc_options << '--title' << 'Locca' << '--main' << 'README.rdoc' << '-ri'
   s.bindir = 'bin'
-  s.executables << 'Locca'
+  s.executables << 'locca'
   s.add_development_dependency('rake')
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')

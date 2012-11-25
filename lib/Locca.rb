@@ -1,3 +1,4 @@
+require 'set'
 
 require 'Locca/version.rb'
 require 'Locca/Config.rb'
