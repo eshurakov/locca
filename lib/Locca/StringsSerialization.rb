@@ -26,7 +26,10 @@ module Locca
 		end
 
 		def self.readModeForFileAtPath(filepath)
-			cd = CharDet.detect(File.read(filepath))
+			cd = nil
+			File.open(filepath) do |file|
+				cd = CharDet.detect(file.read(512))
+			end
 			encoding_str = Encoding.aliases[cd.encoding] || cd.encoding
 			encoding_str = 'UTF-8' if encoding_str == 'utf-8'
 			encoding_str = 'UTF-8' if encoding_str == 'ascii'
@@ -43,7 +46,7 @@ module Locca
 			end
 
 			FileUtils.mkdir_p(File.dirname(filepath))
-			
+
 			File.open(filepath, "wb") do |io|
 				stringsObj.sortedEach do |key, arr|
 					key = key.gsub(/([^\\])"/, "\\1\\\"")
