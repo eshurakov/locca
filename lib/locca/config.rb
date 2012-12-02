@@ -1,10 +1,10 @@
 
 module Locca
 	class Config
-		attr_reader :devLang
+		attr_reader :dev_lang
 
 		def initialize()
-			@devLang = 'en'
+			@dev_lang = 'en'
 		end
 	end
 end

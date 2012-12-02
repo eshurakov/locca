@@ -1,0 +1,42 @@
+﻿/* Account settings page */
+"Account" = "Cuenta";
+
+/* Account settings page */
+"Account Name" = "Nombre de cuenta";
+
+/* Alert field */
+"Alert" = "Alerta";
+
+/* Back button */
+"Back" = "Atrás";
+
+/* Clear button */
+"Clear" = "Eliminar";
+
+/* Account settings page
+   Debug */
+"Debug" = "Debug";
+
+/* Default button */
+"Default" = "Por defecto";
+
+/* Delete button */
+"Delete" = "Eliminar";
+
+/* Error */
+"Error" = "Error";
+
+/* No comment provided by engineer. */
+"Mark as completed" = "Marcar como completada";
+
+/* No comment provided by engineer. */
+"Move to..." = "Mover a...";
+
+/* Alert field */
+"Tap to set alert" = "Toque para establecer alerta";
+
+/* Action sheet button */
+"View Details" = "Ver Detalles";
+
+/* No comment provided by engineer. */
+"Yesterday" = "Ayer";

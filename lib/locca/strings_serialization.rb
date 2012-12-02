@@ -1,31 +1,31 @@
 require 'rchardet19'
 
-require 'Babelyoda/strings_lexer'
-require 'Babelyoda/strings_parser'
+require 'babelyoda/strings_lexer'
+require 'babelyoda/strings_parser'
 
-require_relative 'Strings'
+require_relative 'strings_collection'
 
 module Locca
 	class StringsSerialization
-		def self.stringsObjectWithFileAtPath(filepath)
+		def self.strings_collection_with_file_at_path(filepath)
 			if !File.exists?(filepath)
-				return nil
+				raise "File \"#{filepath}\" not found"
 			end
 
 			lexer = Babelyoda::StringsLexer.new()
 	        parser = Babelyoda::StringsParser.new(lexer)
-	        stringsObj = Strings.new(filepath)
-
-			File.open(filepath, self.readModeForFileAtPath(filepath)) do |file|
+	        collection = StringsCollection.new(filepath)
+	        
+			File.open(filepath, self.read_mode_for_file_at_path(filepath)) do |file|
 				parser.parse(file.read) do |key, value, comment|
-		        	stringsObj.addKey(key, value, comment)
-		        end
+					collection.set_string_for_key(key, value, comment)
+		    	end
 			end
 
-	        return stringsObj
+	    	return collection
 		end
 
-		def self.readModeForFileAtPath(filepath)
+		def self.read_mode_for_file_at_path(filepath)
 			cd = nil
 			File.open(filepath) do |file|
 				cd = CharDet.detect(file.read(512))
@@ -40,7 +40,7 @@ module Locca
 		 	end
 		end
 
-		def self.writeStringsObjectToFileAtPath(stringsObj, filepath)
+		def self.write_strings_collection_to_file_at_path(collection, filepath)
 			if not filepath
 				raise ArgumentException, 'filepath can\'t be nil'
 			end
@@ -48,7 +48,7 @@ module Locca
 			FileUtils.mkdir_p(File.dirname(filepath))
 
 			File.open(filepath, "wb") do |io|
-				stringsObj.sortedEach do |key, arr|
+				collection.sorted_each do |key, arr|
 					key = key.gsub(/([^\\])"/, "\\1\\\"")
 					value = arr[:value].gsub(/([^\\])"/, "\\1\\\"")
 					comment = arr[:comment]

@@ -4,9 +4,10 @@ require 'tmpdir'
 
 module Locca
 	class Genstrings
-		def self.generate(srcDir)
+
+    def self.generate(src_dir)
 			Dir.mktmpdir do |dir|
-				command = "find #{srcDir} -iname \"*.m\" -or -iname \"*.mm\" -or -iname \"*.c\" | xargs genstrings -o '#{dir}'"
+				command = "find #{src_dir} -iname \"*.m\" -or -iname \"*.mm\" -or -iname \"*.c\" | xargs genstrings -o '#{dir}'"
 				stdout,stderr,status = Open3.capture3(command)
 
 				STDERR.puts(stderr)

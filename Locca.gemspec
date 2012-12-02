@@ -1,5 +1,5 @@
 # Ensure we require the local version and not one we might have installed already
-require File.join([File.dirname(__FILE__),'lib','Locca','version.rb'])
+require File.join([File.dirname(__FILE__),'lib','locca','version.rb'])
 spec = Gem::Specification.new do |s| 
   s.name = 'Locca'
   s.version = Locca::VERSION
@@ -11,16 +11,16 @@ spec = Gem::Specification.new do |s|
 # Add your other files here if you make them
   s.files = %w(
 	bin/locca
-  lib/Babelyoda/strings_lexer.rb
-  lib/Babelyoda/strings_parser.rb
-	lib/Locca/Config.rb
-  lib/Locca/Genstrings.rb
-  lib/Locca/Keyset.rb
-  lib/Locca/Strings.rb
-  lib/Locca/StringsMerger.rb
-  lib/Locca/StringsSerialization.rb
-  lib/Locca/version.rb
-	lib/Locca.rb
+  lib/babelyoda/strings_lexer.rb
+  lib/babelyoda/strings_parser.rb
+	lib/locca/config.rb
+  lib/locca/genstrings.rb
+  lib/locca/keyset.rb
+  lib/locca/strings_collection.rb
+  lib/locca/strings_merger.rb
+  lib/locca/strings_serialization.rb
+  lib/locca/version.rb
+	lib/locca.rb
   )
   s.require_paths << 'lib'
   s.has_rdoc = true

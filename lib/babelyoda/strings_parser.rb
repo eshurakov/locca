@@ -15,28 +15,28 @@ module Babelyoda
       end
       while bitstream.size > 0
         record = produce(bitstream)
-        @block.call(record[:key], record[:value], record[:comment]) if record
+        @block.call(record[:string_for_key], record[:value], record[:comment]) if record
       end
     end
 
     def produce(bs)
       match_bs(bs, :multiline_comment, :string, :equal_sign, :string, :semicolon) do |bits|
         result = {}
-        result[:key] = bits[1]
+        result[:string_for_key] = bits[1]
         result[:comment] = bits[0]
         result[:value] = bits[3]
         return result
       end
       match_bs(bs, :singleline_comment, :string, :equal_sign, :string, :semicolon) do |bits|
         result = {}
-        result[:key] = bits[1]
+        result[:string_for_key] = bits[1]
         result[:comment] = bits[0]
         result[:value] = bits[3]
         return result
       end
       match_bs(bs, :string, :equal_sign, :string, :semicolon) do |bits|        
         result = {}
-        result[:key] = bits[0]
+        result[:string_for_key] = bits[0]
         result[:value] = bits[2]
         return result
       end
