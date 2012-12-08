@@ -43,10 +43,13 @@ module Locca
 			return @items.keys
 		end
 
-		def reset_modified_status
-			@modified = false
-			@items.each do |key, item|
-				item.modified = false
+		def modified=(val)
+			@modified = val
+
+			if !@modified
+				@items.each do |key, item|
+					item.modified = false
+				end
 			end
 		end
 

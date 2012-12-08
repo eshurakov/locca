@@ -23,7 +23,7 @@ module Locca
 		    	end
 			end
 
-			collection.reset_modified_status()
+			collection.modified = false
 
 	    	return collection
 		end
@@ -50,7 +50,7 @@ module Locca
 
 			FileUtils.mkdir_p(File.dirname(filepath))
 
-			File.open(filepath, "wb") do |io|
+			File.open(filepath, "w") do |io|
 				collection.sorted_each do |item|
 					key = item.key.gsub(/([^\\])"/, "\\1\\\"")
 					value = item.value.gsub(/([^\\])"/, "\\1\\\"")

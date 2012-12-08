@@ -23,6 +23,19 @@ module Locca
 			return @modified
 		end
 
+		def translated?
+			value = nil
+			if @value
+				value = @value.gsub(/%\d+\$/, "%")
+			end
+
+			if @key == value
+				return false
+			end
+
+			return true
+		end
+
 		def value=(val)
 			if @value == val
 				return

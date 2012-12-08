@@ -11,7 +11,7 @@ class CollectionTest < Test::Unit::TestCase
   		
 	end
 
-	def test_item
+	def test_item_modification
 		item = Locca::StringsItem.new('key', 'value', 'comment')
 		assert(item)
 		assert(!item.modified?)
@@ -42,6 +42,17 @@ class CollectionTest < Test::Unit::TestCase
 
 		cloned_item.value = 'Value2'
 		assert(cloned_item.modified?)		
+	end
+
+	def test_item_translation
+		item = Locca::StringsItem.new('Alert at %02i:%02i %@', 'Alert at %1$02i:%2$02i %3$@')
+		assert(item)
+		assert(!item.translated?)
+		assert(!item.modified?)
+
+		item.value = 'Alarme : %1$02i:%2$02i %3$@'
+		assert(item.translated?)
+		assert(item.modified?)
 	end
 
 end
