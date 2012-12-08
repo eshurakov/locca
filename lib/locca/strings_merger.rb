@@ -18,13 +18,18 @@ module Locca
 				dst_keys = dst_collection.all_keys
 			end
 
-			src_collection.each do |item|
-				if (actions & ACTION_ADD) != 0 and not dst_collection.has_key?(item.key)
-					dst_collection.add_item(item.dup)
+			src_collection.each do |src_item|
+				dst_item = dst_collection.item_for_key(src_item.key)
+
+				if (actions & ACTION_ADD) != 0 and not !dst_item
+					dst_collection.add_item(src_item.dup)
+				elsif (actions & ACTION_UPDATE) != 0 and dst_item
+					dst_item.value = src_item.value
+					dst_item.comment = src_item.comment
 				end
 
 				if dst_keys
-          			dst_keys.delete(item.key)
+          			dst_keys.delete(src_item.key)
 				end
 			end
 

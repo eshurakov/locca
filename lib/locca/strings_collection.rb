@@ -19,6 +19,11 @@ module Locca
 			if !item || !item.key
 				return
 			end
+
+			if has_key?(item.key)
+				return
+			end
+
 			@modified = true
 			@items[item.key] = item
 		end
@@ -65,6 +70,16 @@ module Locca
 			end
 
 			return false
+		end
+
+		def translated?
+			@items.each do |key, item|
+				if !item.translated?
+					return false
+				end
+			end
+
+			return true
 		end
 
 		def count
