@@ -17,6 +17,7 @@ spec = Gem::Specification.new do |s|
   lib/locca/genstrings.rb
   lib/locca/keyset.rb
   lib/locca/strings_collection.rb
+  lib/locca/strings_item.rb
   lib/locca/strings_merger.rb
   lib/locca/strings_serialization.rb
   lib/locca/version.rb

@@ -1,5 +1,6 @@
 
 require_relative 'strings_collection'
+require_relative 'strings_item'
 
 module Locca
 	class StringsMerger
@@ -17,19 +18,19 @@ module Locca
 				dst_keys = dst_collection.all_keys
 			end
 
-			src_collection.each do |key, value|
-				if (actions & ACTION_ADD) != 0 and not dst_collection.has_key?(key)
-					dst_collection.set_string_for_key(key, value[:value], value[:comment])
+			src_collection.each do |item|
+				if (actions & ACTION_ADD) != 0 and not dst_collection.has_key?(item.key)
+					dst_collection.add_item(item.dup)
 				end
 
 				if dst_keys
-          			dst_keys.delete(key)
+          			dst_keys.delete(item.key)
 				end
 			end
 
 			if dst_keys
         		dst_keys.each do |key|
-          			dst_collection.remove_string_for_key(key)
+          			dst_collection.remove_item_for_key(key)
 				end
 			end
 		end

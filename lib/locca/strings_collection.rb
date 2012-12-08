@@ -11,43 +11,73 @@ module Locca
 				@keyset_name = File.basename(@filepath, '.strings')
 			end
 
-			@strings = {}
+			@items = {}
+			@modified = false
 		end
 
-		def set_string_for_key(key, value, comment)
-			@strings[key] = {:value => value, :comment => comment}
+		def add_item(item)
+			if !item || !item.key
+				return
+			end
+			@modified = true
+			@items[item.key] = item
 		end
 
-		def remove_string_for_key(key)
-			return @strings.delete(key)
+		def remove_item_for_key(key)
+			item = @items.delete(key)
+			if item
+				@modified = true
+			end
+			return item
 		end
 
-		def string_for_key(key)
-			return @strings[key]
+		def item_for_key(key)
+			return @items[key]
 		end
 
 		def has_key?(key)
-			return @strings.has_key?(key)
+			return @items.has_key?(key)
 		end
 
 		def all_keys
-			return @strings.keys
+			return @items.keys
+		end
+
+		def reset_modified_status
+			@modified = false
+			@items.each do |key, item|
+				item.modified = false
+			end
+		end
+
+		def modified?
+			if @modified
+				return true
+			end
+
+			@items.each do |key, item|
+				if item.modified?
+					return true
+				end
+			end
+
+			return false
 		end
 
 		def count
-			return @strings.count
+			return @items.count
 		end
 
 		def each
-			@strings.each do |key, value|
-				yield(key, value)
+			@items.each do |key, item|
+				yield(item)
 			end
 		end	
 
 		def sorted_each
 			sorted_keys = all_keys.sort {|a,b| a.downcase <=> b.downcase || a <=> b}
 			sorted_keys.each do |key|
-				yield(key, @strings[key])
+				yield(@items[key])
 			end
 		end
 

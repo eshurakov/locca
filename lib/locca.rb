@@ -6,6 +6,7 @@ require 'locca/config.rb'
 require 'locca/genstrings.rb'
 
 require 'locca/strings_collection.rb'
+require 'locca/strings_item.rb'
 require 'locca/strings_serialization.rb'
 require 'locca/strings_merger.rb'
 
@@ -89,7 +90,9 @@ module Locca
 						raise 'Path is not set for Collection. Can\'t write'
 					end
 
-					StringsSerialization.write_strings_collection_to_file_at_path(project_collection, project_collection.filepath)
+					if project_collection.modified?
+						StringsSerialization.write_strings_collection_to_file_at_path(project_collection, project_collection.filepath)
+					end
 				end
 			end
 

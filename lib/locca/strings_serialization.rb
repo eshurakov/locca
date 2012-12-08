@@ -4,6 +4,7 @@ require 'babelyoda/strings_lexer'
 require 'babelyoda/strings_parser'
 
 require_relative 'strings_collection'
+require_relative 'strings_item'
 
 module Locca
 	class StringsSerialization
@@ -18,9 +19,11 @@ module Locca
 	        
 			File.open(filepath, self.read_mode_for_file_at_path(filepath)) do |file|
 				parser.parse(file.read) do |key, value, comment|
-					collection.set_string_for_key(key, value, comment)
+					collection.add_item(StringsItem.new(key, value, comment))
 		    	end
 			end
+
+			collection.reset_modified_status()
 
 	    	return collection
 		end
@@ -48,12 +51,11 @@ module Locca
 			FileUtils.mkdir_p(File.dirname(filepath))
 
 			File.open(filepath, "wb") do |io|
-				collection.sorted_each do |key, arr|
-					key = key.gsub(/([^\\])"/, "\\1\\\"")
-					value = arr[:value].gsub(/([^\\])"/, "\\1\\\"")
-					comment = arr[:comment]
-
-					io << "/* #{comment} */\n" if comment
+				collection.sorted_each do |item|
+					key = item.key.gsub(/([^\\])"/, "\\1\\\"")
+					value = item.value.gsub(/([^\\])"/, "\\1\\\"")
+					
+					io << "/* #{item.comment} */\n" if item.comment
 					io << "\"#{key}\" = \"#{value}\";\n"
 					io << "\n"
 

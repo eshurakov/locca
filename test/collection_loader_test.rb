@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'locca'
 
-class StringsLoaderTest < Test::Unit::TestCase
+class CollectionLoaderTest < Test::Unit::TestCase
 
   def setup
 
@@ -29,10 +29,11 @@ class StringsLoaderTest < Test::Unit::TestCase
   		
   		master_keys.each do |key|
   			assert(collection.has_key?(key))
-  			string = collection.string_for_key(key)
-  			assert_not_nil(string)
-  			assert_not_nil(string[:comment])
-  			assert_not_nil(string[:value])
+  			item = collection.item_for_key(key)
+  			assert_not_nil(item)
+        assert_not_nil(item.key)
+  			assert_not_nil(item.comment)
+  			assert_not_nil(item.value)
   		end
   	end
   end
