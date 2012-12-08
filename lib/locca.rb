@@ -1,6 +1,8 @@
 require 'set'
 
 require 'locca/version.rb'
+
+require 'locca/project.rb'
 require 'locca/config.rb'
 
 require 'locca/genstrings.rb'
@@ -14,30 +16,27 @@ require 'locca/keyset.rb'
 
 module Locca
 	class Locca
-		attr_reader :locca_dir
-		attr_reader :work_dir
-
-		attr_reader :config
+		attr_reader :project
 
 		def initialize(work_dir = nil, locca_dir = nil)
-			@work_dir, @locca_dir = work_dir, locca_dir
-
-			if @work_dir and not File.directory?(@work_dir)
+			
+			if work_dir and not File.directory?(work_dir)
 				raise ArgumentError, 'Work dir doesn\'t exist'
 			end
 
-			if not @work_dir
-				@work_dir = Dir.pwd
+			if not work_dir
+				work_dir = Dir.pwd
 			end
 
-			@config = Config.new()
+			@project = Project.new(work_dir)
 		end
 
 		def build()
 			generated_collections = Array.new()
-			Genstrings.generate(@work_dir) do |strings_filepath|
-				collection = StringsSerialization.strings_collection_with_file_at_path(strings_filepath)
-				collection.lang = @config.dev_lang
+			Genstrings.generate(@project.dir) do |filepath|
+				collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
+				collection.lang = @project.dev_lang
+
 				generated_collections.push(collection)
 			end
 
@@ -45,11 +44,11 @@ module Locca
 			keysets = {}
 			available_langs = Set.new
 
-			Dir.glob(File.join(@work_dir, '*.lproj')) do |filepath|
+			Dir.glob(File.join(@project.dir, '*.lproj')) do |filepath|
 				lang = File.basename(filepath, '.lproj')
 				available_langs.add(lang)
 				Dir.glob(File.join(filepath, '*.strings')) do |strings_filepath|
-					collection = StringsSerialization.stringsObjectWithFileAtPath(strings_filepath)
+					collection = StringsSerialization.strings_collection_with_file_at_path(strings_filepath)
 					collection.lang = lang
 
 					keyset = keysets[collection.keyset_name]
@@ -77,7 +76,7 @@ module Locca
 					else
 						project_collection = Marshal.load(Marshal.dump(generated_collection))
 						project_collection.lang = lang
-						project_collection.filepath = File.join(@work_dir, "#{lang}.lproj", "#{project_collection.keyset_name}.strings")
+						project_collection.filepath = File.join(@project.dir, "#{lang}.lproj", "#{project_collection.keyset_name}.strings")
 
 						keyset.add_collection(project_collection)
 					end

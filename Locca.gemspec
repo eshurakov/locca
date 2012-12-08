@@ -14,6 +14,7 @@ spec = Gem::Specification.new do |s|
   lib/babelyoda/strings_lexer.rb
   lib/babelyoda/strings_parser.rb
 	lib/locca/config.rb
+  lib/locca/project.rb
   lib/locca/genstrings.rb
   lib/locca/keyset.rb
   lib/locca/strings_collection.rb

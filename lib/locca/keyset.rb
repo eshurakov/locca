@@ -11,7 +11,7 @@ module Locca
 		end
 
 		def add_collection(collection)
-			@collections[collection.lang] = strings
+			@collections[collection.lang] = collection
 		end
 
 		def collection_for_lang(lang)
