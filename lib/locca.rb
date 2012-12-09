@@ -20,25 +20,22 @@ module Locca
 	class Locca
 		attr_reader :project
 
-		def initialize(work_dir = nil, locca_dir = nil)
-			
-			if work_dir and not File.directory?(work_dir)
-				raise ArgumentError, 'Work dir doesn\'t exist'
-			end
+		def initialize(work_dir = nil)
+			@project = Project.project_with_dir(work_dir)
 
-			if not work_dir
-				work_dir = Dir.pwd
+			if !@project
+				if !work_dir
+					raise 'Can\'t determine work dir for project'
+				else
+					raise "Can\'t find project for work dir: #{work_dir}"
+				end
 			end
-
-			@project = Project.new(work_dir)
 		end
 
 		def build()
 			generated_collections = Array.new()
 			Genstrings.generate(@project.dir) do |filepath|
 				collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
-				collection.lang = @project.dev_lang
-
 				generated_collections.push(collection)
 			end
 
@@ -117,7 +114,7 @@ module Locca
 		def translate_collection(collection)
 			editor = ENV['EDITOR']
 			if !editor
-				raise ArgumentError, 'EDITOR variable should be defined'
+				raise ArgumentError, 'EDITOR environment variable should be defined'
 			end
 
 			file = Tempfile.new("#{collection.keyset_name}-#{collection.lang}-")

@@ -11,9 +11,9 @@ version Locca::VERSION
 #desc 'Verbose'
 #switch [:v,:verbose]
 
-desc 'Localization configs dir'
-arg_name '<path>'
-flag ['locca-dir'.to_sym]
+# desc 'Localization configs dir'
+# arg_name '<path>'
+# flag ['locca-dir'.to_sym]
 
 desc 'Work dir'
 arg_name '<path>'
@@ -46,12 +46,16 @@ desc 'Translate files'
 arg_name 'language'
 command :translate do |c|
 	c.action do |global_options,options,args|
+		if !args || args.count == 0 || !args[0]
+			exit_now!("Language should be passed as an argument")
+		end
+
 		$locca.translate(args[0])
 	end
 end
 
 pre do |global,command,options,args|
-	$locca = Locca::Locca.new(global['work-dir'.to_sym], global['locca-dir'.to_sym])
+	$locca = Locca::Locca.new(global['work-dir'.to_sym])
 
 	true
 end
