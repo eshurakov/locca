@@ -32,24 +32,27 @@ module Locca
 			end
 		end
 
-		def build()
+		def build(langs = nil)
 			generated_collections = Array.new()
 			Genstrings.generate(@project.dir) do |filepath|
 				collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
 				generated_collections.push(collection)
 			end
 
-
 			keysets = {}
-			available_langs = Set.new
 
-			Dir.glob(File.join(@project.dir, '*.lproj')) do |filepath|
-				lang = File.basename(filepath, '.lproj')
-				available_langs.add(lang)
+			if !langs
+				langs = Set.new()
+			end
 
-				collections = collections_for_lang(lang)
+			if langs.count == 0
+				Dir.glob(File.join(@project.dir, '*.lproj')) do |filepath|
+					langs.add(File.basename(filepath, '.lproj'))
+				end
+			end
 
-				collections.each do |collection|
+			langs.each do |lang|
+				collections_for_lang(lang) do |collection|
 					keyset = keysets[collection.keyset_name]
 					if not keyset
 						keyset = Keyset.new(collection.keyset_name)
@@ -59,7 +62,6 @@ module Locca
 				end
 			end
 
-
 			generated_collections.each do |generated_collection|
 				keyset = keysets[generated_collection.keyset_name]
 				if not keyset
@@ -67,17 +69,14 @@ module Locca
 					keysets[keyset.name] = keyset
 				end
 
-				available_langs.each do |lang|
+				langs.each do |lang|
 					project_collection = keyset.collection_for_lang(lang)
-					if project_collection
-						StringsMerger.merge(generated_collection, project_collection)
-					else
-						project_collection = Marshal.load(Marshal.dump(generated_collection))
-						project_collection.lang = lang
-						project_collection.filepath = File.join(@project.dir, "#{lang}.lproj", "#{project_collection.keyset_name}.strings")
-
+					if !project_collection
+						project_collection = StringsCollection.new(File.join(@project.dir, "#{lang}.lproj", "#{keyset.name}.strings"), lang)
 						keyset.add_collection(project_collection)
 					end
+
+					StringsMerger.merge(generated_collection, project_collection)
 				end
 			end
 
@@ -86,7 +85,7 @@ module Locca
 					if not project_collection.filepath
 						raise 'Path is not set for Collection. Can\'t write'
 					end
-
+					
 					if project_collection.modified?
 						StringsSerialization.write_strings_collection_to_file_at_path(project_collection, project_collection.filepath)
 					end
@@ -100,8 +99,7 @@ module Locca
 				raise ArgumentError, 'language should be specified'
 			end
 
-			collections = collections_for_lang(lang)
-			collections.each do |collection|
+			collections_for_lang(lang) do |collection|
 				if collection.translated?
 					next
 				end
@@ -147,16 +145,11 @@ module Locca
 		end
 
 		def collections_for_lang(lang)
-			collections = Array.new()
-
 			Dir.glob(File.join(project.dir, "#{lang}.lproj", '*.strings')) do |filepath|
 				collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
 				collection.lang = lang
-				collections.push(collection)
+				yield(collection)
 			end
-
-			return collections
 		end
-		
 	end
 end

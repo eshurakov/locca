@@ -21,9 +21,9 @@ module Locca
 			src_collection.each do |src_item|
 				dst_item = dst_collection.item_for_key(src_item.key)
 
-				if (actions & ACTION_ADD) != 0 and not !dst_item
+				if (actions & ACTION_ADD) != 0 && !dst_item
 					dst_collection.add_item(src_item.dup)
-				elsif (actions & ACTION_UPDATE) != 0 and dst_item
+				elsif (actions & ACTION_UPDATE) != 0 && dst_item
 					dst_item.value = src_item.value
 					dst_item.comment = src_item.comment
 				end

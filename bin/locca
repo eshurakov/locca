@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'gli'
 require 'locca'
+require 'set'
 
 include GLI::App
 
@@ -27,10 +28,20 @@ flag ['work-dir'.to_sym]
 # end
 
 desc 'Create and update language files from source code'
-arg_name 'Describe arguments to build here'
+arg_name '[lang, [lang, ...]]'
 command :build do |c|
 	c.action do |global_options,options,args|
-		$locca.build()
+		langs = Set.new()
+		if args
+			args.each do |lang|
+				if lang =~ /\A[[:alpha:]]+\z/
+					langs.add(lang)
+				else
+					puts "Invalid language: #{lang}"
+				end
+			end
+		end
+		$locca.build(langs)
 	end
 end
 
