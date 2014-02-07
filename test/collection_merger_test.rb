@@ -1,7 +1,7 @@
-require 'test_helper'
 require 'locca'
+require 'minitest/autorun'
 
-class CollectionMergerTest < Test::Unit::TestCase
+class CollectionMergerTest < MiniTest::Test
 
 	def test_merge
 

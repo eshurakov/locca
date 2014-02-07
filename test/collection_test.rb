@@ -1,14 +1,12 @@
-require 'test_helper'
 require 'locca'
+require 'minitest/autorun'
 
-class CollectionTest < Test::Unit::TestCase
+class CollectionTest < MiniTest::Test
 
 	def test_modification
 		filepath = File.join(Dir.pwd, 'test', 'Fixtures', 'Localizable_utf8.strings')
   		collection = Locca::StringsSerialization.strings_collection_with_file_at_path(filepath)
-  		assert(collection, "Nil Collection for file #{filepath}")
-
-  		
+  		assert(collection, "Nil Collection for file #{filepath}")  		
 	end
 
 	def test_item_modification

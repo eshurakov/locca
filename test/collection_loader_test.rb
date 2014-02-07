@@ -1,7 +1,7 @@
-require 'test_helper'
 require 'locca'
+require 'minitest/autorun'
 
-class CollectionLoaderTest < Test::Unit::TestCase
+class CollectionLoaderTest < MiniTest::Test
 
 def setup
 
@@ -31,13 +31,13 @@ def test_file_encodings
         master_keys.each do |key|
             assert(collection.has_key?(key), "Missing key: #{key}")
             item = collection.item_for_key(key)
-            assert_not_nil(item)
-            assert_not_nil(item.key)
+            assert(item)
+            assert(item.key)
             if filename != 'Localizable_nocomments_utf8.strings'
-                assert_not_nil(item.comment)
+                assert(item.comment)
             end
             
-            assert_not_nil(item.value)
+            assert(item.value)
         end
     end
 
