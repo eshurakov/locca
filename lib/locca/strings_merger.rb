@@ -22,7 +22,9 @@ module Locca
 				dst_item = dst_collection.item_for_key(src_item.key)
 
 				if (actions & ACTION_ADD) != 0 && !dst_item
-					dst_collection.add_item(src_item.dup)
+					localItem = src_item.dup
+					localItem.modified = true
+					dst_collection.add_item(localItem)
 				elsif (actions & ACTION_UPDATE) != 0 && dst_item
 					dst_item.value = src_item.value
 					dst_item.comment = src_item.comment

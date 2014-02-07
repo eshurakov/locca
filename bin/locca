@@ -19,6 +19,7 @@ version Locca::VERSION
 desc 'Work dir'
 arg_name '<path>'
 flag ['work-dir'.to_sym]
+flag ['strings-dir'.to_sym]
 
 # desc 'Initialize project'
 # command :init do |c|
@@ -66,7 +67,7 @@ command :translate do |c|
 end
 
 pre do |global,command,options,args|
-	$locca = Locca::Locca.new(global['work-dir'.to_sym])
+	$locca = Locca::Locca.new(global['work-dir'.to_sym], global['strings-dir'.to_sym])
 
 	true
 end

@@ -5,8 +5,9 @@ module Locca
 	class Project
 		attr_reader :config
 		attr_reader :dir
+		attr_reader :strings_dir
 
-		def self.project_with_dir(dir)
+		def self.project_with_dir(dir, strings_dir)
 			if dir and not File.directory?(dir)
 				return nil
 			end
@@ -18,7 +19,7 @@ module Locca
 			while dir
 				result = Dir.glob(File.join(dir, "*.xcodeproj"))
 				if result && result.count > 0
-					return Project.new(dir)
+					return Project.new(dir, strings_dir)
 				end
 				new_dir = File.expand_path('..', dir)
 				if new_dir == dir
@@ -30,8 +31,9 @@ module Locca
 			return nil
 		end
 
-		def initialize(dir)
+		def initialize(dir, strings_dir)
 			@dir = dir
+			@strings_dir = strings_dir
 			@config = Config.new()
 		end
 	end

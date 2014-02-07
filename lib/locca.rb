@@ -20,8 +20,8 @@ module Locca
 	class Locca
 		attr_reader :project
 
-		def initialize(work_dir = nil)
-			@project = Project.project_with_dir(work_dir)
+		def initialize(work_dir = nil, strings_dir = nil)
+			@project = Project.project_with_dir(work_dir, strings_dir)
 
 			if !@project
 				if !work_dir
@@ -46,7 +46,7 @@ module Locca
 			end
 
 			if langs.count == 0
-				Dir.glob(File.join(@project.dir, '*.lproj')) do |filepath|
+				Dir.glob(File.join(@project.strings_dir, '*.lproj')) do |filepath|
 					langs.add(File.basename(filepath, '.lproj'))
 				end
 			end
@@ -72,7 +72,7 @@ module Locca
 				langs.each do |lang|
 					project_collection = keyset.collection_for_lang(lang)
 					if !project_collection
-						project_collection = StringsCollection.new(File.join(@project.dir, "#{lang}.lproj", "#{keyset.name}.strings"), lang)
+						project_collection = StringsCollection.new(File.join(@project.strings_dir, "#{lang}.lproj", "#{keyset.name}.strings"), lang)
 						keyset.add_collection(project_collection)
 					end
 
@@ -145,7 +145,7 @@ module Locca
 		end
 
 		def collections_for_lang(lang)
-			Dir.glob(File.join(project.dir, "#{lang}.lproj", '*.strings')) do |filepath|
+			Dir.glob(File.join(project.strings_dir, "#{lang}.lproj", '*.strings')) do |filepath|
 				collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
 				collection.lang = lang
 				yield(collection)
