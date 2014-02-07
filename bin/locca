@@ -9,29 +9,14 @@ program_desc 'Application localization kit'
 
 version Locca::VERSION
 
-#desc 'Verbose'
-#switch [:v,:verbose]
-
-# desc 'Localization configs dir'
-# arg_name '<path>'
-# flag ['locca-dir'.to_sym]
-
 desc 'Work dir'
 arg_name '<path>'
 flag ['work-dir'.to_sym]
-flag ['strings-dir'.to_sym]
-
-# desc 'Initialize project'
-# command :init do |c|
-# 	c.action do |global_options,options,args|
-# 		exit_now!("Init is not implemented")
-# 	end
-# end
 
 desc 'Create and update language files from source code'
 arg_name '[lang, [lang, ...]]'
 command :build do |c|
-	c.action do |global_options,options,args|
+	c.action do |global_options, options, args|
 		langs = Set.new()
 		if args
 			args.each do |lang|
@@ -57,7 +42,7 @@ end
 desc 'Translate files'
 arg_name 'language'
 command :translate do |c|
-	c.action do |global_options,options,args|
+	c.action do |global_options, options, args|
 		if !args || args.count == 0 || !args[0]
 			exit_now!("Language should be passed as an argument")
 		end
@@ -66,13 +51,13 @@ command :translate do |c|
 	end
 end
 
-pre do |global,command,options,args|
-	$locca = Locca::Locca.new(global['work-dir'.to_sym], global['strings-dir'.to_sym])
+pre do |global, command, options, args|
+	$locca = Locca::Locca.new(global['work-dir'.to_sym])
 
 	true
 end
 
-post do |global,command,options,args|
+post do |global, command, options, args|
 	# Post logic here
 	# Use skips_post before a command to skip this
 	# block on that command only
