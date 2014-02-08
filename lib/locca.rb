@@ -7,8 +7,6 @@ require 'locca/version.rb'
 require 'locca/project.rb'
 require 'locca/project_factory.rb'
 
-require 'locca/config.rb'
-
 require 'locca/genstrings.rb'
 
 require 'locca/strings_collection.rb'
@@ -24,14 +22,6 @@ module Locca
 
         def initialize(project_factory, work_dir)
             @project = project_factory.newProject(work_dir)
-
-            # work_dir = Locca.get_work_dir(work_dir)
-
-            # if !work_dir
-            #     raise 'Can\'t determine work dir for project'
-            # end
-
-            # @project = Project.project_with_dir(work_dir, nil)
         end
 
         def build(langs = nil)

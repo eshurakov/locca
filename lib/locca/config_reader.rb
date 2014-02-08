@@ -1,12 +1,9 @@
+require 'yaml'
 
 module Locca
     class ConfigReader
-        def initialize(reader, parser)
-            @reader, @parser = reader, parser
-        end
-
         def read(path)
-            
+            return YAML.load_file(path)
         end
     end
 end
