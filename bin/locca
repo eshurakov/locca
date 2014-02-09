@@ -16,58 +16,68 @@ flag ['work-dir'.to_sym]
 desc 'Create and update language files from source code'
 arg_name '[lang, [lang, ...]]'
 command :build do |c|
-	c.action do |global_options, options, args|
-		langs = Set.new()
-		if args
-			args.each do |lang|
-				if lang =~ /\A[[:alpha:]]+\z/
-					langs.add(lang)
-				else
-					puts "Invalid language: #{lang}"
-				end
-			end
-		end
-		$locca.build(langs)
-	end
+    c.action do |global_options, options, args|
+        langs = Set.new()
+        if args
+            args.each do |lang|
+                if lang =~ /\A[[:alpha:]]+\z/
+                    langs.add(lang)
+                else
+                    puts "Invalid language: #{lang}"
+                end
+            end
+        end
+        $locca.build(langs)
+    end
 end
 
 # desc 'Synchronize changes with server'
 # arg_name 'Describe arguments to sync here'
 # command :sync do |c|
-# 	c.action do |global_options,options,args|
-# 		exit_now!("Sync is not implemented")
-# 	end
+#   c.action do |global_options,options,args|
+#       exit_now!("Sync is not implemented")
+#   end
 # end
 
-desc 'Translate files'
-arg_name 'language'
-command :translate do |c|
-	c.action do |global_options, options, args|
-		if !args || args.count == 0 || !args[0]
-			exit_now!("Language should be passed as an argument")
-		end
+# desc 'Translate files'
+# arg_name 'language'
+# command :translate do |c|
+#     c.action do |global_options, options, args|
+#         if !args || args.count == 0 || !args[0]
+#             exit_now!("Language should be passed as an argument")
+#         end
 
-		$locca.translate(args[0])
-	end
-end
+#         $locca.translate(args[0])
+#     end
+# end
 
 pre do |global, command, options, args|
-	$locca = Locca::Locca.new(global['work-dir'.to_sym])
+    work_dir = global['work-dir'.to_sym]
+    if not work_dir
+        work_dir = Dir.getwd
+    end
+    project_dir_locator = Locca::ProjectDirLocator.new()
+    config_reader = Locca::ConfigReader.new()
+    project_factory = Locca::ProjectFactory.new(project_dir_locator, config_reader)
 
-	true
+    project = project_factory.new_project(work_dir)
+
+    $locca = Locca::Locca.new(project)
+
+    true
 end
 
 post do |global, command, options, args|
-	# Post logic here
-	# Use skips_post before a command to skip this
-	# block on that command only
+    # Post logic here
+    # Use skips_post before a command to skip this
+    # block on that command only
 end
 
 on_error do |exception|
-	# Error logic here
-	# return false to skip default error handling
-	# puts exception.backtrace
-	true
+    # Error logic here
+    # return false to skip default error handling
+    # puts exception.backtrace
+    true
 end
 
 exit run(ARGV)

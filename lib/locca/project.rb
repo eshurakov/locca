@@ -10,10 +10,10 @@ module Locca
         def initialize(dir, config)
             @dir = dir
             
-            @code_dir = File.join(dir, config.code_dir)
-            @lang_dir = File.join(dir, config.lang_dir)
+            @code_dir = File.join(dir, config[:code_dir])
+            @lang_dir = File.join(dir, config[:lang_dir])
 
-            @base_lang = config.base_lang
+            @base_lang = config[:base_lang]
         end
 
     end
