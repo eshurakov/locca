@@ -1,56 +1,46 @@
-# require 'locca'
-# require 'minitest/autorun'
+require 'locca/collection'
+require 'locca/collection_item'
+require 'minitest/autorun'
 
-# class CollectionTest < MiniTest::Test
+class CollectionTest < MiniTest::Test
 
-# 	def test_modification
-# 		filepath = File.join(Dir.pwd, 'test', 'Fixtures', 'Localizable_utf8.strings')
-#   		collection = Locca::StringsSerialization.strings_collection_with_file_at_path(filepath)
-#   		assert(collection, "Nil Collection for file #{filepath}")  		
-# 	end
+def test_init
+    name = 'test1'
+    lang = 'test2'
+    collection = Locca::Collection.new(name, lang)
+    assert(collection)
+    assert_equal(0, collection.count)
+    assert_equal([], collection.all_keys)
+    assert_equal(name, collection.name)
+    assert_equal(lang, collection.lang)
+end
 
-# 	def test_item_modification
-# 		item = Locca::StringsItem.new('key', 'value', 'comment')
-# 		assert(item)
-# 		assert(!item.modified?)
-# 		assert_equal('key', item.key);
-# 		assert_equal('value', item.value);
-# 		assert_equal('comment', item.comment);
+def test_add_item
+    item_key = 'key'
+    collection_item = Locca::CollectionItem.new(item_key)
 
-# 		item.value = 'value1'
-# 		assert(item.modified?)
+    collection = Locca::Collection.new()
+    collection.add_item(collection_item)
 
-# 		cloned_item = item.dup
-# 		assert(cloned_item)
-# 		assert(!cloned_item.modified?)
+    assert_equal(1, collection.count)
+    assert_equal([item_key], collection.all_keys)
 
-# 		assert_equal('key', cloned_item.key);
-# 		assert_equal('value1', cloned_item.value);
-# 		assert_equal('comment', cloned_item.comment);
+    assert(collection.has_key?(item_key))
+    assert_equal(collection_item, collection.item_for_key(item_key))
+end
 
-# 		cloned_item.value = 'value2'
-# 		assert(cloned_item.modified?)
+def test_remove_item
+    item_key = 'key'
+    collection_item = Locca::CollectionItem.new(item_key)
 
-# 		assert_equal('value1', item.value);
-# 		assert_equal('value2', cloned_item.value);
+    collection = Locca::Collection.new()
+    collection.add_item(collection_item)
+    collection.remove_item_for_key(item_key)
 
-# 		cloned_item.modified = false
-# 		cloned_item.value = 'value2'
-# 		assert(!cloned_item.modified?)
+    assert_equal(0, collection.count)
+    assert_equal([], collection.all_keys)
+    refute(collection.has_key?(item_key))
+    refute(collection.item_for_key(item_key))
+end
 
-# 		cloned_item.value = 'Value2'
-# 		assert(cloned_item.modified?)		
-# 	end
-
-# 	def test_item_translation
-# 		item = Locca::StringsItem.new('Alert at %02i:%02i %@', 'Alert at %1$02i:%2$02i %3$@')
-# 		assert(item)
-# 		assert(!item.translated?)
-# 		assert(!item.modified?)
-
-# 		item.value = 'Alarme : %1$02i:%2$02i %3$@'
-# 		assert(item.translated?)
-# 		assert(item.modified?)
-# 	end
-
-# end
+end

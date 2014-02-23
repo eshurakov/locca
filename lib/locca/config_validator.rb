@@ -3,6 +3,10 @@ module Locca
     class ConfigValidator
         attr_accessor :fields
 
+        def initialize(fields = nil)
+            @fields = fields
+        end
+
         def validate(hash)
             if not @fields 
                 return true

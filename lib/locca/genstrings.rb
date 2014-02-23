@@ -3,23 +3,22 @@ require 'fileutils'
 require 'tmpdir'
 
 module Locca
-	class Genstrings
+    class Genstrings
+        def generate(code_dir)
+            Dir.mktmpdir do |tmp_dir|
+                command = "find #{code_dir} -iname \"*.m\" -or -iname \"*.mm\" -or -iname \"*.c\" | xargs genstrings -o '#{tmp_dir}'"
+                stdout, stderr, status = Open3.capture3(command)
 
-    def self.generate(src_dir)
-			Dir.mktmpdir do |dir|
-				command = "find #{src_dir} -iname \"*.m\" -or -iname \"*.mm\" -or -iname \"*.c\" | xargs genstrings -o '#{dir}'"
-				stdout,stderr,status = Open3.capture3(command)
+                STDERR.puts(stderr)
 
-				STDERR.puts(stderr)
-
-				if status.success?
-					Dir.glob(File.join(dir, '*.strings')) do |filename|
-						yield(filename)
-					end
-				else
-					raise "genstrings failed"
-				end
-			end
-		end
-	end
+                if status.success?
+                    Dir.glob(File.join(tmp_dir, '*.strings')) do |filename|
+                        yield(filename)
+                    end
+                else
+                    raise "genstrings failed"
+                end
+            end
+        end
+    end
 end

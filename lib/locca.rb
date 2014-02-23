@@ -1,23 +1,22 @@
-require 'set'
-require 'tempfile'
-require 'open3'
+require 'locca/version'
 
-require 'locca/version.rb'
+require 'locca/project'
+require 'locca/project_dir_locator'
+require 'locca/project_factory'
 
-require 'locca/project.rb'
-require 'locca/project_factory.rb'
-require 'locca/project_dir_locator.rb'
+require 'locca/config_reader'
+require 'locca/config_validator'
 
-require 'locca/config_reader.rb'
+require 'locca/actions/build_action'
 
-require 'locca/genstrings.rb'
+require 'locca/collections_generator'
+require 'locca/collection_merger'
+require 'locca/collection_builder'
 
-require 'locca/strings_collection.rb'
-require 'locca/strings_item.rb'
-require 'locca/strings_serialization.rb'
-require 'locca/strings_merger.rb'
+require 'locca/genstrings'
 
-require 'locca/keyset.rb'
+require 'babelyoda/strings_lexer'
+require 'babelyoda/strings_parser'
 
 module Locca
     class Locca
@@ -29,72 +28,18 @@ module Locca
             end
 
             @project = project
-        end
-
-        def collections_from_code()
-            result = Array.new()
-            Genstrings.generate(@project.code_dir) do |filepath|
-                collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
-                result.push(collection)
-            end
-            return result
-        end
-
-        def langs
-            result = Set.new()
-            Dir.glob(File.join(@project.strings_dir, '*.lproj')) do |filepath|
-                result.add(File.basename(filepath, '.lproj'))
-            end
-            return result
-        end
+        end        
 
         def build()
-            # langs = langs()
-            # generated_collections = collections_from_code()
+            parser = Babelyoda::StringsParser.new(Babelyoda::StringsLexer.new())
 
-            # keysets = {}
+            genstrings = Genstrings.new()
+            collection_builder = CollectionBuilder.new(File, parser)
+            collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
+            collection_merger = CollectionMerger.new()
 
-            # langs.each do |lang|
-            #     collections_for_lang(lang) do |collection|
-            #         keyset = keysets[collection.keyset_name]
-            #         if not keyset
-            #             keyset = Keyset.new(collection.keyset_name)
-            #             keysets[keyset.name] = keyset
-            #         end
-            #         keyset.add_collection(collection)
-            #     end
-            # end
-
-            # generated_collections.each do |generated_collection|
-            #     keyset = keysets[generated_collection.keyset_name]
-            #     if not keyset
-            #         keyset = Keyset.new(generated_collection.keyset_name)
-            #         keysets[keyset.name] = keyset
-            #     end
-
-            #     langs.each do |lang|
-            #         project_collection = keyset.collection_for_lang(lang)
-            #         if !project_collection
-            #             project_collection = StringsCollection.new(File.join(@project.strings_dir, "#{lang}.lproj", "#{keyset.name}.strings"), lang)
-            #             keyset.add_collection(project_collection)
-            #         end
-
-            #         StringsMerger.merge(generated_collection, project_collection)
-            #     end
-            # end
-
-            # keysets.each do |key, keyset|
-            #     keyset.each_collection do |project_collection|
-            #         if not project_collection.filepath
-            #             raise 'Path is not set for Collection. Can\'t write'
-            #         end
-                    
-            #         if project_collection.modified?
-            #             StringsSerialization.write_strings_collection_to_file_at_path(project_collection, project_collection.filepath)
-            #         end
-            #     end
-            # end
-
+            action = BuildAction.new(@project, collection_builder, collections_generator, collection_merger)
+            action.execute()
         end
 
         # def translate(lang)
@@ -147,12 +92,12 @@ module Locca
         #     file.unlink
         # end
 
-        def collections_for_lang(lang)
-            Dir.glob(File.join(project.strings_dir, "#{lang}.lproj", '*.strings')) do |filepath|
-                collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
-                collection.lang = lang
-                yield(collection)
-            end
-        end
+        # def collections_for_lang(lang)
+        #     Dir.glob(File.join(project.strings_dir, "#{lang}.lproj", '*.strings')) do |filepath|
+        #         collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
+        #         collection.lang = lang
+        #         yield(collection)
+        #     end
+        # end
     end
 end

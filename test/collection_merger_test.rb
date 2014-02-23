@@ -1,62 +1,116 @@
-# require 'locca'
-# require 'minitest/autorun'
+require 'minitest/autorun'
+require 'mocha/mini_test'
 
-# class CollectionMergerTest < MiniTest::Test
+require 'locca/collection'
+require 'locca/collection_item'
+require 'locca/collection_merger'
 
-# 	def test_merge
+class CollectionMergerTest < MiniTest::Test
 
-# 		filepath = File.join(Dir.pwd, 'test', 'Fixtures', 'Localizable_modified.strings')
-# 		src_collection = Locca::StringsSerialization.strings_collection_with_file_at_path(filepath)
-# 		assert(src_collection, "Nil Collection for file #{filepath}")
+def setup
+    @merger = Locca::CollectionMerger.new()
 
-# 		filepath = File.join(Dir.pwd, 'test', 'Fixtures', 'Localizable_utf8.strings')
-# 		dst_collection = Locca::StringsSerialization.strings_collection_with_file_at_path(filepath)
-# 		assert(dst_collection, "Nil Collection for file #{filepath}")
+    @base_items = [
+        item("Account", "Cuenta", "Account settings page"),
+        item("Account Name", "Nombre de cuenta", "Account settings page"),
+    ]
 
-# 		assert(!src_collection.modified?)
-# 		assert(!dst_collection.modified?)
+    @added_items = [
+        item("Support", "Support", "No comment provided by engineer"),
+        item("Reminder", "Rappel", "Reminder view title")
+    ]
 
-# 		master_keys = ['Account', 'Account Name', 'Alert', 'Back', 'Clear', 'Debug', 'Default', 'Delete', 'Error', 'Mark as completed', 'Move to...', 'Tap to set alert', 'View Details', 'Yesterday']
-# 		added_keys = ['Support', 'Status', 'Reminder']
-# 		removed_keys = ['Delete', 'Default', 'Yesterday']
+    @removed_items = [
+        item("Delete", "Удалить", "No Comment"),
+        item("Yesterday", "Вчера", "No Comment")
+    ]
 
-# 		Locca::StringsMerger.merge(src_collection, dst_collection, Locca::StringsMerger::ACTION_ADD)
+    @updated_items = [
+        item("Account", "Accounto", "Account settings page new comment"),
+    ]
 
-# 		assert(!src_collection.modified?)
-# 		assert(dst_collection.modified?)
+# ----
 
-# 		assert_equal(master_keys.count + added_keys.count, dst_collection.count)
+    @src_collection = base_collection()
+    @added_items.each do |item|
+        @src_collection.add_item(item)
+    end
+    @updated_items.each do |item|
+        @src_collection.add_item(item)
+    end
 
-# 		added_keys.each do |key|
-# 			assert(dst_collection.has_key?(key))
-# 		end
+# ----
 
-# 		removed_keys.each do |key|
-# 			assert(dst_collection.has_key?(key))
-# 		end
+    @dst_collection = base_collection()
+    @removed_items.each do |item|
+        @dst_collection.add_item(item)
+    end
+end
 
-# 		filepath = File.join(Dir.pwd, 'test', 'Fixtures', 'Localizable_utf8.strings')
-# 		dst_collection = Locca::StringsSerialization.strings_collection_with_file_at_path(filepath)
-# 		assert(dst_collection, "Nil Collection for file #{filepath}")
+def item(key, value, comment)
+    return Locca::CollectionItem.new(key, value, comment)
+end
 
-# 		assert(!src_collection.modified?)
-# 		assert(!dst_collection.modified?)
+def base_collection()
+    collection = Locca::Collection.new()
+    @base_items.each do |item|
+        collection.add_item(item)
+    end
+    return collection
+end
 
-# 		Locca::StringsMerger.merge(src_collection, dst_collection, Locca::StringsMerger::ACTION_ADD | Locca::StringsMerger::ACTION_DELETE)
+def test_merge_add
+    @merger.merge(@src_collection, @dst_collection, Locca::CollectionMerger::ACTION_ADD)
 
-# 		assert(!src_collection.modified?)
-# 		assert(dst_collection.modified?)
+    assert_equal(@base_items.count + @added_items.count + @removed_items.count, @dst_collection.count)
 
-# 		assert_equal(master_keys.count + added_keys.count - removed_keys.count, dst_collection.count)
+    @added_items.each do |item|
+        assert_equal(item, @dst_collection.item_for_key(item.key))
+    end
 
-# 		added_keys.each do |key|
-# 			assert(dst_collection.has_key?(key))
-# 		end
+    @removed_items.each do |item|
+        assert_equal(item, @dst_collection.item_for_key(item.key))
+    end
 
-# 		removed_keys.each do |key|
-# 			assert(!dst_collection.has_key?(key))
-# 		end  		
+    @base_items.each do |item|
+        assert_equal(item, @dst_collection.item_for_key(item.key)) 
+    end
+end
 
-# 	end
+def test_merge_delete
+    @merger.merge(@src_collection, @dst_collection, Locca::CollectionMerger::ACTION_DELETE)
 
-# end
+    assert_equal(@base_items.count, @dst_collection.count)
+
+    @added_items.each do |item|
+        refute(@dst_collection.has_key?(item.key))
+    end
+
+    @removed_items.each do |item|
+        refute(@dst_collection.has_key?(item.key))
+    end
+
+    @base_items.each do |item|
+        assert_equal(item, @dst_collection.item_for_key(item.key)) 
+    end
+end
+
+def test_merge_update
+    @merger.merge(@src_collection, @dst_collection, Locca::CollectionMerger::ACTION_UPDATE)
+
+    assert_equal(@base_items.count + @removed_items.count, @dst_collection.count)
+
+    @added_items.each do |item|
+        refute(@dst_collection.has_key?(item.key))
+    end
+
+    @removed_items.each do |item|
+        assert_equal(item, @dst_collection.item_for_key(item.key))
+    end
+
+    @updated_items.each do |item|
+        assert_equal(item, @dst_collection.item_for_key(item.key)) 
+    end
+end
+
+end

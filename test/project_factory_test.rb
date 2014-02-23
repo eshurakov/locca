@@ -20,9 +20,9 @@ def test_project_is_created_and_configured
     @project_dir_locator.expect(:locate, @dir, [@dir])
     
     config = {
-        :code_dir => "Classes", 
-        :lang_dir => 'Localization',
-        :base_lang => 'en'
+        'code_dir' => "Classes", 
+        'lang_dir' => 'Localization',
+        'base_lang' => 'en'
     }
     @config_reader.expect(:read, config, [@config_path])
     @config_validator.expect(:validate, true, [config])

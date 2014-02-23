@@ -9,10 +9,10 @@ end
 
 def test_validation
     hash = {
-        :code_dir => "Classes", 
-        :lang_dir => 'Localization'
+        'code_dir' => "Classes", 
+        'lang_dir' => 'Localization'
     }
-    @validator.fields = [:code_dir, :lang_dir]
+    @validator.fields = ['code_dir', 'lang_dir']
 
     result = @validator.validate(hash)
     assert(result)
@@ -28,9 +28,9 @@ end
 
 def test_validation_err
     hash = {
-        :code_dir => "Classes"
+        'code_dir' => "Classes"
     }
-    @validator.fields = [:code_dir, :lang_dir]
+    @validator.fields = ['code_dir', 'lang_dir']
 
     result = @validator.validate(hash)
     refute(result)
