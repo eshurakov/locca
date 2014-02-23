@@ -44,18 +44,6 @@ command :build do |c|
     end
 end
 
-# desc 'Translate files'
-# arg_name 'language'
-# command :translate do |c|
-#     c.action do |global_options, options, args|
-#         if !args || args.count == 0 || !args[0]
-#             exit_now!("Language should be passed as an argument")
-#         end
-
-#         $locca.translate(args[0])
-#     end
-# end
-
 pre do |global, command, options, args|
     work_dir = global['work-dir'.to_sym]
     if not work_dir
