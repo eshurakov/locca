@@ -1,3 +1,27 @@
+#
+# The MIT License (MIT)
+#
+# Copyright (c) 2014 Evgeny Shurakov
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+
 require 'locca/version'
 
 require 'locca/project'
@@ -42,62 +66,5 @@ module Locca
             action.execute()
         end
 
-        # def translate(lang)
-        #     if !lang
-        #         raise ArgumentError, 'language should be specified'
-        #     end
-
-        #     collections_for_lang(lang) do |collection|
-        #         if collection.translated?
-        #             next
-        #         end
-
-        #         translate_collection(collection)
-        #         break
-        #     end
-        # end
-
-        # def translate_collection(collection)
-        #     editor = ENV['EDITOR']
-        #     if !editor
-        #         raise ArgumentError, 'EDITOR environment variable should be defined'
-        #     end
-
-        #     file = Tempfile.new("#{collection.keyset_name}-#{collection.lang}-")
-        #     tmpCollection = StringsCollection.new()
-
-        #     collection.each do |item|
-        #         if item.translated?
-        #             next
-        #         end
-
-        #         tmpCollection.add_item(item)
-        #     end
-
-        #     StringsSerialization.write_strings_collection_to_file_at_path(tmpCollection, file.path)
-
-        #     command = "#{editor} #{file.path}"
-        #     stdout,stderr,status = Open3.capture3(command)
-
-        #     if status.success?
-        #         translated_collection = StringsSerialization.strings_collection_with_file_at_path(file.path)
-        #         StringsMerger.merge(translated_collection, collection, StringsMerger::ACTION_UPDATE)
-
-        #         if collection.modified?
-        #             StringsSerialization.write_strings_collection_to_file_at_path(collection, collection.filepath)
-        #         end
-        #     end
-
-        #     file.close
-        #     file.unlink
-        # end
-
-        # def collections_for_lang(lang)
-        #     Dir.glob(File.join(project.strings_dir, "#{lang}.lproj", '*.strings')) do |filepath|
-        #         collection = StringsSerialization.strings_collection_with_file_at_path(filepath)
-        #         collection.lang = lang
-        #         yield(collection)
-        #     end
-        # end
     end
 end
