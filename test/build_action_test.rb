@@ -1,6 +1,8 @@
 require 'locca/actions/build_action'
+require 'locca/collection_merger'
 require 'minitest/autorun'
 require 'mocha/mini_test'
+
 
 class BuildActionTest < MiniTest::Test
 
@@ -42,7 +44,7 @@ def test_action
 
         @collection_builder.expects(:collection_at_path).with(collection_path).returns(collection)
 
-        @collection_merger.expects(:merge).with(generated_collection, collection)
+        @collection_merger.expects(:merge).with(generated_collection, collection, (Locca::CollectionMerger::ACTION_ADD | Locca::CollectionMerger::ACTION_DELETE))
     end
 
     @action.execute()

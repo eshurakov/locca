@@ -22,6 +22,8 @@
 # SOFTWARE.
 #
 
+require 'locca/collection_merger'
+
 module Locca
     class BuildAction
         def initialize(project, collections_builder, collections_generator, collection_merger)
@@ -41,7 +43,7 @@ module Locca
 
                     collection = @collections_builder.collection_at_path(collection_path)
 
-                    @collection_merger.merge(generated_collection, collection)
+                    @collection_merger.merge(generated_collection, collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_DELETE))
 
                     collection.write_to(collection_path)
                 end
