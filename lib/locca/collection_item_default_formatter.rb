@@ -22,30 +22,18 @@
 # SOFTWARE.
 #
 
-require 'locca/collection_merger'
-
 module Locca
-    class BuildAction
-        def initialize(project, collection_builder, collection_writer, collections_generator, collection_merger)
-            @project = project
-            @collections_generator = collections_generator
-            @collection_merger = collection_merger
-            @collection_builder = collection_builder
-            @collection_writer = collection_writer
-        end
+    class CollectionItemDefaultFormatter
+        def format_item(item)
+            key = item.key.gsub(/([^\\])"/, "\\1\\\"")
+            value = item.value.gsub(/([^\\])"/, "\\1\\\"")
+            
+            result = ""
+            result << "/* #{item.comment} */\n" if item.comment
+            result << "\"#{key}\" = \"#{value}\";\n"
 
-        def execute()
-            generated_collections = @collections_generator.generate(@project.code_dir())
-            langs = @project.langs()
-
-            generated_collections.each do |generated_collection|
-                langs.each do |lang|
-                    collection_path = @project.path_for_collection(generated_collection.name, lang)
-                    collection = @collection_builder.collection_at_path(collection_path)
-                    @collection_merger.merge(generated_collection, collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_DELETE))
-                    @collection_writer.write_to_path(collection, collection_path)
-                end
-            end
+            return result
         end
     end
 end
+

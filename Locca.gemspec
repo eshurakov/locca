@@ -13,7 +13,7 @@ spec = Gem::Specification.new do |s|
   s.require_paths << 'lib'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README.rdoc','Locca.rdoc']
-  s.rdoc_options << '--title' << 'Locca' << '--main' << 'README.rdoc' << '-ri'
+  s.rdoc_options << '--title' << 'Locca' << '--main' << 'README.rdoc' << '-r'
   s.bindir = 'bin'
   s.executables << 'locca'
   s.add_development_dependency('minitest')

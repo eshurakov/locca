@@ -22,28 +22,24 @@
 # SOFTWARE.
 #
 
-require 'locca/collection_merger'
-
 module Locca
-    class BuildAction
-        def initialize(project, collection_builder, collection_writer, collections_generator, collection_merger)
-            @project = project
-            @collections_generator = collections_generator
-            @collection_merger = collection_merger
-            @collection_builder = collection_builder
-            @collection_writer = collection_writer
+    class CollectionWriter
+        def initialize(file_manager, formatter)
+            @file_manager = file_manager
+            @formatter = formatter
         end
 
-        def execute()
-            generated_collections = @collections_generator.generate(@project.code_dir())
-            langs = @project.langs()
+        def write_to_path(collection, filepath)
+            if not filepath
+                raise ArgumentException, 'filepath can\'t be nil'
+            end
 
-            generated_collections.each do |generated_collection|
-                langs.each do |lang|
-                    collection_path = @project.path_for_collection(generated_collection.name, lang)
-                    collection = @collection_builder.collection_at_path(collection_path)
-                    @collection_merger.merge(generated_collection, collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_DELETE))
-                    @collection_writer.write_to_path(collection, collection_path)
+            FileUtils.mkdir_p(@file_manager.dirname(filepath))
+
+            @file_manager.open(filepath, "w") do |io|
+                collection.sorted_each do |item|
+                    io << @formatter.format_item(item)
+                    io << "\n"
                 end
             end
         end

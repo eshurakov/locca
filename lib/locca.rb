@@ -37,6 +37,8 @@ require 'locca/actions/merge_action'
 require 'locca/collections_generator'
 require 'locca/collection_merger'
 require 'locca/collection_builder'
+require 'locca/collection_writer'
+require 'locca/collection_item_condensed_formatter'
 
 require 'locca/genstrings'
 
@@ -54,18 +56,22 @@ module Locca
             collection_builder = collection_builder()
             collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
 
-            action = BuildAction.new(project, collection_builder, collections_generator, collection_merger())
+            action = BuildAction.new(project, collection_builder, collection_writer(), collections_generator, collection_merger())
             action.execute()
         end
 
         def merge(src_file, dst_file)
-            action = MergeAction.new(src_file, dst_file, collection_builder(), collection_merger())
+            action = MergeAction.new(src_file, dst_file, collection_builder(), collection_writer(), collection_merger())
             action.execute()
         end
 
         def collection_builder()
             parser = Babelyoda::StringsParser.new(Babelyoda::StringsLexer.new())
             return CollectionBuilder.new(File, parser) 
+        end
+
+        def collection_writer()
+            return CollectionWriter.new(File, CollectionItemCondensedFormatter.new())
         end
 
         def collection_merger()

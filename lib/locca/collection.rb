@@ -83,25 +83,6 @@ module Locca
             end
         end
 
-        def write_to(filepath)
-            if not filepath
-                raise ArgumentException, 'filepath can\'t be nil'
-            end
-
-            FileUtils.mkdir_p(File.dirname(filepath))
-
-            File.open(filepath, "w") do |io|
-                sorted_each do |item|
-                    key = item.key.gsub(/([^\\])"/, "\\1\\\"")
-                    value = item.value.gsub(/([^\\])"/, "\\1\\\"")
-                    
-                    io << "/* #{item.comment} */\n" if item.comment
-                    io << "\"#{key}\" = \"#{value}\";\n"
-                    io << "\n"
-                end
-            end
-        end
-
         def to_s ; "<#{self.class}: lang = #{lang}, name = #{name}>" ; end
     end
 end

@@ -11,8 +11,8 @@ def setup
     @collection_builder = mock('collection_builder')
     @collections_generator = mock('collections_generator')
     @collection_merger = mock('collection_merger')
-
-    @action = Locca::BuildAction.new(@project, @collection_builder, @collections_generator, @collection_merger)
+    @collection_writer = mock('collection_writer')
+    @action = Locca::BuildAction.new(@project, @collection_builder, @collection_writer, @collections_generator, @collection_merger)
 end
 
 # Generate language files from the code: Localizable.strings, Other.strings
@@ -41,8 +41,8 @@ def test_action
         @project.expects(:path_for_collection).at_least_once().with(collection_name, lang).returns(collection_path)
 
         collection = mock("collection-#{lang}")
-        collection.expects(:write_to).with(collection_path)
-
+        
+        @collection_writer.expects(:write_to_path).with(collection, collection_path)
         @collection_builder.expects(:collection_at_path).with(collection_path).returns(collection)
 
         @collection_merger.expects(:merge).with(generated_collection, collection, (Locca::CollectionMerger::ACTION_ADD | Locca::CollectionMerger::ACTION_DELETE))

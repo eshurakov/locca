@@ -26,18 +26,19 @@ require 'locca/collection_merger'
 
 module Locca
     class MergeAction
-        def initialize(src_file, dst_file, collection_builder, collection_merger)
+        def initialize(src_file, dst_file, collection_builder, collection_writer, collection_merger)
             @src_file = src_file
             @dst_file = dst_file
             @collection_merger = collection_merger
             @collection_builder = collection_builder
+            @collection_writer = collection_writer
         end
 
         def execute()
         	src_collection = @collection_builder.collection_at_path(@src_file)
         	dst_collection = @collection_builder.collection_at_path(@dst_file)
         	@collection_merger.merge(src_collection, dst_collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_UPDATE))
-			dst_collection.write_to(@dst_file)
+			@collection_writer.write_to_path(dst_collection, @dst_file)
         end
     end
 end
