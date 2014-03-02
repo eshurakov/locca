@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    Locca (0.5.0)
+    Locca (0.9.0)
       gli
 
 GEM

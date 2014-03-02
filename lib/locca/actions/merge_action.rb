@@ -25,26 +25,19 @@
 require 'locca/collection_merger'
 
 module Locca
-    class BuildAction
-        def initialize(project, collection_builder, collections_generator, collection_merger)
-            @project = project
-            @collections_generator = collections_generator
+    class MergeAction
+        def initialize(src_file, dst_file, collection_builder, collection_merger)
+            @src_file = src_file
+            @dst_file = dst_file
             @collection_merger = collection_merger
             @collection_builder = collection_builder
         end
 
         def execute()
-            generated_collections = @collections_generator.generate(@project.code_dir())
-            langs = @project.langs()
-
-            generated_collections.each do |generated_collection|
-                langs.each do |lang|
-                    collection_path = @project.path_for_collection(generated_collection.name, lang)
-                    collection = @collection_builder.collection_at_path(collection_path)
-                    @collection_merger.merge(generated_collection, collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_DELETE))
-                    collection.write_to(collection_path)
-                end
-            end
+        	src_collection = @collection_builder.collection_at_path(@src_file)
+        	dst_collection = @collection_builder.collection_at_path(@dst_file)
+        	@collection_merger.merge(src_collection, dst_collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_UPDATE))
+			dst_collection.write_to(@dst_file)
         end
     end
 end

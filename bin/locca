@@ -40,24 +40,34 @@ flag ['work-dir'.to_sym]
 desc 'Create and update language files from source code'
 command :build do |c|
     c.action do |global_options, options, args|
-        $locca.build()
+
+        work_dir = global_options['work-dir'.to_sym]
+        if not work_dir
+            work_dir = Dir.getwd
+        end
+        project_dir_locator = Locca::ProjectDirLocator.new()
+        config_reader = Locca::ConfigReader.new()
+        config_validator = Locca::ConfigValidator.new(['code_dir', 'lang_dir'])
+        project_factory = Locca::ProjectFactory.new(project_dir_locator, config_reader, config_validator)
+
+        project = project_factory.new_project(work_dir)
+
+        $locca.build(project)
     end
 end
 
+desc 'Merge translations from source file to destination file (add missing, update existing)'
+command :merge do |c|
+    c.action do |global_options, options, args|
+        if args.count != 2
+            raise 'You should pass source file path and destination file path'
+        end
+        $locca.merge(args[0], args[1])
+    end 
+end
+
 pre do |global, command, options, args|
-    work_dir = global['work-dir'.to_sym]
-    if not work_dir
-        work_dir = Dir.getwd
-    end
-    project_dir_locator = Locca::ProjectDirLocator.new()
-    config_reader = Locca::ConfigReader.new()
-    config_validator = Locca::ConfigValidator.new(['code_dir', 'lang_dir'])
-    project_factory = Locca::ProjectFactory.new(project_dir_locator, config_reader, config_validator)
-
-    project = project_factory.new_project(work_dir)
-
-    $locca = Locca::Locca.new(project)
-
+    $locca = Locca::Locca.new()
     true
 end
 
@@ -70,7 +80,7 @@ end
 on_error do |exception|
     # Error logic here
     # return false to skip default error handling
-    # puts exception.backtrace
+    puts exception.backtrace
     true
 end
 

@@ -32,12 +32,13 @@ def test_action
     @project.stubs(:code_dir).returns(code_dir)
     @project.stubs(:lang_dir).returns(lang_dir)
     @project.stubs(:langs).returns(langs)
-
+    
     generated_collections = [generated_collection]
     @collections_generator.expects(:generate).with(code_dir).returns(generated_collections)
 
     langs.each do |lang|
         collection_path = "#{lang_dir}/#{lang}.lproj/#{collection_name}.strings"
+        @project.expects(:path_for_collection).at_least_once().with(collection_name, lang).returns(collection_path)
 
         collection = mock("collection-#{lang}")
         collection.expects(:write_to).with(collection_path)

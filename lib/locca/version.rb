@@ -22,5 +22,5 @@
 # SOFTWARE.
 #
 module Locca
-  VERSION = '0.5.0'
+  VERSION = '0.9.0'
 end

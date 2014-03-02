@@ -32,6 +32,7 @@ require 'locca/config_reader'
 require 'locca/config_validator'
 
 require 'locca/actions/build_action'
+require 'locca/actions/merge_action'
 
 require 'locca/collections_generator'
 require 'locca/collection_merger'
@@ -44,27 +45,31 @@ require 'babelyoda/strings_parser'
 
 module Locca
     class Locca
-        attr_reader :project
-
-        def initialize(project)
+        def build(project)
             if not project
                 raise 'Can\'t initialize Locca with nil project'
             end
 
-            @project = project
-        end        
-
-        def build()
-            parser = Babelyoda::StringsParser.new(Babelyoda::StringsLexer.new())
-
             genstrings = Genstrings.new()
-            collection_builder = CollectionBuilder.new(File, parser)
+            collection_builder = collection_builder()
             collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
-            collection_merger = CollectionMerger.new()
 
-            action = BuildAction.new(@project, collection_builder, collections_generator, collection_merger)
+            action = BuildAction.new(project, collection_builder, collections_generator, collection_merger())
             action.execute()
         end
 
+        def merge(src_file, dst_file)
+            action = MergeAction.new(src_file, dst_file, collection_builder(), collection_merger())
+            action.execute()
+        end
+
+        def collection_builder()
+            parser = Babelyoda::StringsParser.new(Babelyoda::StringsLexer.new())
+            return CollectionBuilder.new(File, parser) 
+        end
+
+        def collection_merger()
+            return CollectionMerger.new()
+        end
     end
 end
