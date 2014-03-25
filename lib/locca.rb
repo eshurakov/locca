@@ -39,6 +39,7 @@ require 'locca/collection_merger'
 require 'locca/collection_builder'
 require 'locca/collection_writer'
 require 'locca/collection_item_condensed_formatter'
+require 'locca/collection_item_default_formatter'
 
 require 'locca/genstrings'
 
@@ -71,7 +72,7 @@ module Locca
         end
 
         def collection_writer()
-            return CollectionWriter.new(File, CollectionItemCondensedFormatter.new())
+            return CollectionWriter.new(File, CollectionItemDefaultFormatter.new())
         end
 
         def collection_merger()

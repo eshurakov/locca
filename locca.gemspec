@@ -1,7 +1,7 @@
 require File.join([File.dirname(__FILE__),'lib','locca','version.rb'])
 
 spec = Gem::Specification.new do |s| 
-  s.name = 'Locca'
+  s.name = 'locca'
   s.version = Locca::VERSION
   s.author = 'Shurakov Evgeny'
   s.email = 'inbox@shurakov.name'
