@@ -5,15 +5,14 @@ spec = Gem::Specification.new do |s|
   s.version = Locca::VERSION
   s.author = 'Shurakov Evgeny'
   s.email = 'inbox@shurakov.name'
-  s.homepage = 'http://shurakov.name/locca'
+  s.homepage = 'https://github.com/eshurakov/locca'
   s.platform = Gem::Platform::RUBY
   s.license = 'MIT'
   s.summary = 'Application localization kit'
   s.files = Dir.glob("{bin,lib}/**/*")
   s.require_paths << 'lib'
   s.has_rdoc = true
-  s.extra_rdoc_files = ['README.rdoc','Locca.rdoc']
-  s.rdoc_options << '--title' << 'Locca' << '--main' << 'README.rdoc' << '-r'
+  s.extra_rdoc_files = ['README.rdoc']
   s.bindir = 'bin'
   s.executables << 'locca'
   s.add_development_dependency('minitest')

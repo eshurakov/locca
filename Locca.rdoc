@@ -1,5 +1,0 @@
-= Locca
-
-Generate this with
-    Locca rdoc
-After you have described your command line interface
