@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    Locca (0.9.0)
+    locca (0.9.1)
       gli
 
 GEM
@@ -10,19 +10,25 @@ GEM
     gli (2.9.0)
     json (1.7.5)
     metaclass (0.0.2)
+    mime-types (1.25.1)
     minitest (5.2.2)
     mocha (1.0.0)
       metaclass (~> 0.0.1)
+    netrc (0.7.7)
     rake (10.0.2)
     rdoc (3.12)
       json (~> 1.4)
+    rest-client (1.7.2)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  Locca!
+  locca!
   minitest
   mocha
   rake
   rdoc
+  rest-client

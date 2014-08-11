@@ -32,15 +32,21 @@ module Locca
         end
 
         def collection_at_path(path)
-            name = File.basename(path, '.strings')
-            collection = Collection.new(name)
+            collection = nil
 
             @file_manager.open(path, 'rb:BOM|UTF-8:UTF-8') do |file|
-                @parser.parse(file.read()) do |key, value, comment|
-                    collection.add_item(CollectionItem.new(key, value, comment))
-                end
+                collection = collection_from_datastring(file.read())
+                collection.name = File.basename(path, '.strings')
             end
 
+            return collection
+        end
+
+        def collection_from_datastring(datastring)
+            collection = Collection.new()
+            @parser.parse(datastring) do |key, value, comment|
+                collection.add_item(CollectionItem.new(key, value, comment))
+            end
             return collection
         end
     end

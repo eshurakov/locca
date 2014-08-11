@@ -27,11 +27,12 @@ module Locca
         attr_reader :dir
         attr_reader :code_dir
         attr_reader :lang_dir
-
+        
         attr_reader :base_lang
 
         def initialize(dir, config)
             @dir = dir
+            @config = config
             
             @code_dir = File.join(dir, config['code_dir'])
             @lang_dir = File.join(dir, config['lang_dir'])
@@ -49,6 +50,10 @@ module Locca
 
         def path_for_collection(collection_name, lang)
             return File.join(@lang_dir, "#{lang}.lproj", "#{collection_name}.strings")
+        end
+
+        def config_value_for_key(key)
+            return @config[key]
         end
     end
 end

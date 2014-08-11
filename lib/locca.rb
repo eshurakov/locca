@@ -33,6 +33,9 @@ require 'locca/config_validator'
 
 require 'locca/actions/build_action'
 require 'locca/actions/merge_action'
+require 'locca/actions/sync_action'
+
+require 'locca/sync/onesky'
 
 require 'locca/collections_generator'
 require 'locca/collection_merger'
@@ -63,6 +66,21 @@ module Locca
 
         def merge(src_file, dst_file)
             action = MergeAction.new(src_file, dst_file, collection_builder(), collection_writer(), collection_merger())
+            action.execute()
+        end
+
+        def sync(project)
+            if not project
+                raise 'Can\'t initialize Locca with nil project'
+            end
+            
+            genstrings = Genstrings.new()
+            collection_builder = collection_builder()
+            collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
+
+            onesky = Onesky.new(project.config_value_for_key('onesky_project_id'), project.config_value_for_key('onesky_public_key'), project.config_value_for_key('onesky_secret_key'))
+
+            action = SyncAction.new(project, collection_builder, collection_writer(), collections_generator, collection_merger(), onesky)
             action.execute()
         end
 
