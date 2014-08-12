@@ -22,7 +22,6 @@
 # SOFTWARE.
 #
 
-require 'json'
 require 'digest/md5'
 require 'rest_client'
 
