@@ -34,6 +34,7 @@ require 'locca/config_validator'
 require 'locca/actions/build_action'
 require 'locca/actions/merge_action'
 require 'locca/actions/sync_action'
+require 'locca/actions/translate_action'
 
 require 'locca/sync/onesky'
 
@@ -81,6 +82,20 @@ module Locca
             onesky = Onesky.new(project.config_value_for_key('onesky_project_id'), project.config_value_for_key('onesky_public_key'), project.config_value_for_key('onesky_secret_key'))
 
             action = SyncAction.new(project, collection_builder, collection_writer(), collections_generator, collection_merger(), onesky)
+            action.execute()
+        end
+
+        def translate(project, lang = nil)
+            if not project
+                raise 'Can\'t initialize Locca with nil project'
+            end
+
+            if not lang
+                lang = project.base_lang
+            end
+
+            collection_builder = collection_builder()
+            action = TranslateAction.new(project, lang, collection_builder, collection_writer(), collection_merger())
             action.execute()
         end
 

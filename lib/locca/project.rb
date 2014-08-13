@@ -48,6 +48,15 @@ module Locca
             return result
         end
 
+        def collection_names
+            result = Set.new()
+            Dir.glob(File.join(@lang_dir, "#{@base_lang}.lproj", '*.strings')) do |filepath|
+                result.add(File.basename(filepath, '.strings'))
+            end
+
+            return result 
+        end
+
         def path_for_collection(collection_name, lang)
             return File.join(@lang_dir, "#{lang}.lproj", "#{collection_name}.strings")
         end
