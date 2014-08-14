@@ -30,24 +30,24 @@
 require 'locca/collection_merger'
 
 module Locca
-    class SyncAction
-        def initialize(project, collection_builder, collection_writer, collections_generator, collection_merger, onesky)
+    class OneskySyncAction
+        def initialize(project, onesky, collection_builder, collection_writer, collections_generator, collection_merger)
             @project = project
             @collections_generator = collections_generator
             @collection_merger = collection_merger
             @collection_builder = collection_builder
             @collection_writer = collection_writer
             @onesky = onesky
+
+            @langs = @project.langs()
+            @generated_collections = @collections_generator.generate(@project.code_dir())
         end 
 
-        def execute()
-            langs = @project.langs()
-            generated_collections = @collections_generator.generate(@project.code_dir())
-
+        def fetch()
             # 1
-            generated_collections.each do |generated_collection|
-                langs.each do |lang|
-                    print "\t* fetch: #{lang}/#{generated_collection.name}.strings\n"
+            @generated_collections.each do |generated_collection|
+                @langs.each do |lang|
+                    print "[*] fetch: #{lang}/#{generated_collection.name}.strings\n"
                     data = @onesky.fetch_translations(lang, "#{generated_collection.name}.strings")
                     fetched_collection = @collection_builder.collection_from_datastring(data)
 
@@ -55,16 +55,20 @@ module Locca
                     local_collection = @collection_builder.collection_at_path(local_collection_path)
 
                     # 2
-                    print "\t* merge: onesky -> #{lang}/#{generated_collection.name}.strings\n"
+                    print "[*] merge: onesky -> #{lang}/#{generated_collection.name}.strings\n"
                     @collection_merger.merge(fetched_collection, local_collection, CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_UPDATE)
                     @collection_writer.write_to_path(local_collection, local_collection_path)
                 end
             end
+        end
+
+        def sync()
+            fetch()
 
             # 3
-            generated_collections.each do |generated_collection|
-                langs.each do |lang|
-                    print "\t* merge: code -> #{lang}/#{generated_collection.name}.strings\n"
+            @generated_collections.each do |generated_collection|
+                @langs.each do |lang|
+                    print "[*] merge: code -> #{lang}/#{generated_collection.name}.strings\n"
 
                     collection_path = @project.path_for_collection(generated_collection.name, lang)
                     collection = @collection_builder.collection_at_path(collection_path)
@@ -74,8 +78,8 @@ module Locca
             end
 
             # 4
-            generated_collections.each do |generated_collection|
-                print "\t* upload: #{@project.base_lang}/#{generated_collection.name}.strings\n"
+            @generated_collections.each do |generated_collection|
+                print "[*] upload: #{@project.base_lang}/#{generated_collection.name}.strings\n"
                 collection_path = @project.path_for_collection(generated_collection.name, @project.base_lang())
                 @onesky.upload_file(collection_path)
             end

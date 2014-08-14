@@ -60,7 +60,7 @@ command :merge do |c|
     end 
 end
 
-desc 'Sync translations with external translation service'
+desc 'Sync (fetch, merge and upload new) translations with external translation service'
 command :sync do |c|
     c.action do |global_options, options, args|
         work_dir = global_options['work-dir'.to_sym]
@@ -69,6 +69,18 @@ command :sync do |c|
         end
 
         $locca.sync(project_in_dir(work_dir))
+    end  
+end
+
+desc 'Fetch and merge translations from external translation service'
+command :fetch do |c|
+    c.action do |global_options, options, args|
+        work_dir = global_options['work-dir'.to_sym]
+        if not work_dir
+            work_dir = Dir.getwd
+        end
+
+        $locca.fetch(project_in_dir(work_dir))
     end  
 end
 

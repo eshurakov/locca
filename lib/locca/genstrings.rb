@@ -32,7 +32,10 @@ module Locca
                 command = "find #{code_dir} -iname \"*.m\" -or -iname \"*.mm\" -or -iname \"*.c\" | xargs genstrings -o '#{tmp_dir}'"
                 stdout, stderr, status = Open3.capture3(command)
 
-                STDERR.puts(stderr)
+                stderr = stderr.strip
+                if stderr.length > 0
+                    STDERR.puts()
+                end
 
                 if status.success?
                     Dir.glob(File.join(tmp_dir, '*.strings')) do |filename|

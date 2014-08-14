@@ -33,7 +33,7 @@ require 'locca/config_validator'
 
 require 'locca/actions/build_action'
 require 'locca/actions/merge_action'
-require 'locca/actions/sync_action'
+require 'locca/actions/onesky_sync_action'
 require 'locca/actions/translate_action'
 
 require 'locca/sync/onesky'
@@ -57,12 +57,7 @@ module Locca
                 raise 'Can\'t initialize Locca with nil project'
             end
 
-            genstrings = Genstrings.new()
-            collection_builder = collection_builder()
-            collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
-
-            action = BuildAction.new(project, collection_builder, collection_writer(), collections_generator, collection_merger())
-            action.execute()
+            build_action(project).execute()
         end
 
         def merge(src_file, dst_file)
@@ -75,14 +70,15 @@ module Locca
                 raise 'Can\'t initialize Locca with nil project'
             end
             
-            genstrings = Genstrings.new()
-            collection_builder = collection_builder()
-            collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
+            one_sky_action(project).sync()
+        end
 
-            onesky = Onesky.new(project.config_value_for_key('onesky_project_id'), project.config_value_for_key('onesky_public_key'), project.config_value_for_key('onesky_secret_key'))
-
-            action = SyncAction.new(project, collection_builder, collection_writer(), collections_generator, collection_merger(), onesky)
-            action.execute()
+        def fetch(project)
+            if not project
+                raise 'Can\'t initialize Locca with nil project'
+            end
+            
+            one_sky_action(project).fetch()
         end
 
         def translate(project, lang = nil)
@@ -97,6 +93,24 @@ module Locca
             collection_builder = collection_builder()
             action = TranslateAction.new(project, lang, collection_builder, collection_writer(), collection_merger())
             action.execute()
+        end
+
+        def build_action(project)
+            genstrings = Genstrings.new()
+            collection_builder = collection_builder()
+            collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
+
+            return BuildAction.new(project, collection_builder, collection_writer(), collections_generator, collection_merger())
+        end
+
+        def one_sky_action(project)
+            genstrings = Genstrings.new()
+            collection_builder = collection_builder()
+            collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
+
+            onesky = Onesky.new(project.config_value_for_key('onesky_project_id'), project.config_value_for_key('onesky_public_key'), project.config_value_for_key('onesky_secret_key'))
+
+            return OneskySyncAction.new(project, onesky, collection_builder(), collection_writer(), collections_generator, collection_merger())
         end
 
         def collection_builder()
