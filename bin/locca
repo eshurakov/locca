@@ -117,8 +117,7 @@ end
 def project_in_dir(dir)
     project_dir_locator = Locca::ProjectDirLocator.new()
     config_reader = Locca::ConfigReader.new()
-    config_validator = Locca::ConfigValidator.new(['code_dir', 'lang_dir', 'base_lang'])
-    project_factory = Locca::ProjectFactory.new(project_dir_locator, config_reader, config_validator)
+    project_factory = Locca::ProjectFactory.new(project_dir_locator, config_reader)
 
     project = project_factory.new_project(dir)
 end

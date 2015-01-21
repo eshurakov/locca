@@ -35,7 +35,7 @@ module Locca
         end
 
         def execute()
-            generated_collections = @collections_generator.generate(@project.code_dir())
+            generated_collections = @collections_generator.generate()
             langs = @project.langs()
 
             generated_collections.each do |generated_collection|

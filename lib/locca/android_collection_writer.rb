@@ -1,7 +1,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2014 Evgeny Shurakov
+# Copyright (c) 2015 Evgeny Shurakov
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,47 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+
+require 'nokogiri'
+
 module Locca
-  VERSION = '0.9.5'
+
+	class AndroidCollectionWriter
+
+        def initialize(file_manager)
+            @file_manager = file_manager
+        end
+
+        def write_to_path(collection, filepath)
+            if not filepath
+                raise ArgumentException, 'filepath can\'t be nil'
+            end
+
+            FileUtils.mkdir_p(@file_manager.dirname(filepath))
+
+
+            document = Nokogiri::XML("")
+            document.encoding = "UTF-8"
+
+            resources = Nokogiri::XML::Node.new('resources', document)
+
+            collection.sorted_each do |item|
+				if item.comment
+					resources.add_child(Nokogiri::XML::Comment.new(document, " #{item.comment} "))
+				end
+
+				string = Nokogiri::XML::Node.new('string', document)
+				string["name"] = item.key
+				string.content = item.value
+				resources.add_child(string)
+	        end
+
+            document.root = resources
+
+            @file_manager.open(filepath, "w") do |io|
+                io << document.to_xml
+            end
+        end
+    end
+
 end

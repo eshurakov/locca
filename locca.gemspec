@@ -21,4 +21,5 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rdoc')
   s.add_runtime_dependency('gli')
   s.add_runtime_dependency('rest-client')
+  s.add_runtime_dependency('nokogiri')
 end

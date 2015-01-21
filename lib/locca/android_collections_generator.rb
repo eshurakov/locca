@@ -1,7 +1,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2014 Evgeny Shurakov
+# Copyright (c) 2015 Evgeny Shurakov
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-require_relative 'project'
 
 module Locca
-    class ProjectNotFoundError < RuntimeError
-    end
 
-    class ConfigNotFoundError < RuntimeError
-    end
+	class AndroidCollectionsGenerator
 
-    class ConfigNotValidError < RuntimeError
-    end
-
-    class ProjectFactory
-
-        def initialize(project_dir_locator, config_reader, config_validator)
-            @project_dir_locator = project_dir_locator
-            @config_reader = config_reader
-            @config_validator = config_validator
+        def initialize(project, collection_builder)
+            @collection_builder = collection_builder
+            @project = project
         end
 
-        def new_project(project_dir)
-            project_dir = @project_dir_locator.locate(project_dir)
-            if not project_dir
-                raise ProjectNotFoundError, 'Can\'t find .locca dir (also checked parent dirs)'
+        def generate()
+            result = Array.new()
+
+            @project.collection_names.each do |collection_name|
+                collection_path = @project.path_for_collection(collection_name, @project.base_lang)
+                collection = @collection_builder.collection_at_path(collection_path)
+                result.push(collection)
             end
 
-            config = @config_reader.read(@project_dir_locator.config_path(project_dir))
-            if not config
-                raise ConfigNotFoundError, 'Can\'t find .locca/config'
-            end
-
-            if not @config_validator.validate(config)
-               raise ConfigNotValidError, 'Config .locca/config is not valid' 
-            end
-
-            return Project.new(project_dir, config)
+            return result
         end
-
     end
+
 end

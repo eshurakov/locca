@@ -1,23 +1,27 @@
 PATH
   remote: .
   specs:
-    locca (0.9.3)
+    locca (0.9.5)
       gli
+      nokogiri
       rest-client
 
 GEM
   remote: https://rubygems.org/
   specs:
-    gli (2.9.0)
-    json (1.7.5)
-    metaclass (0.0.2)
-    mime-types (1.25.1)
-    minitest (5.2.2)
-    mocha (1.0.0)
+    gli (2.12.2)
+    json (1.8.2)
+    metaclass (0.0.4)
+    mime-types (2.4.3)
+    mini_portile (0.6.2)
+    minitest (5.5.1)
+    mocha (1.1.0)
       metaclass (~> 0.0.1)
-    netrc (0.7.7)
-    rake (10.0.2)
-    rdoc (3.12)
+    netrc (0.10.2)
+    nokogiri (1.6.5)
+      mini_portile (~> 0.6.0)
+    rake (10.4.2)
+    rdoc (4.2.0)
       json (~> 1.4)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
@@ -30,6 +34,7 @@ DEPENDENCIES
   locca!
   minitest
   mocha
+  nokogiri
   rake
   rdoc
   rest-client

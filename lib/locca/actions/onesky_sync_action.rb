@@ -40,22 +40,22 @@ module Locca
             @onesky = onesky
 
             @langs = @project.langs()
-            @generated_collections = @collections_generator.generate(@project.code_dir())
+            @generated_collections = @collections_generator.generate()
         end 
 
         def fetch()
             # 1
             @generated_collections.each do |generated_collection|
                 @langs.each do |lang|
-                    print "[*] fetch: #{lang}/#{generated_collection.name}.strings\n"
-                    data = @onesky.fetch_translations(lang, "#{generated_collection.name}.strings")
+                    print "[*] fetch: #{lang}/#{generated_collection.name}\n"
+                    data = @onesky.fetch_translations(lang, @project.full_collection_name(generated_collection.name))
                     fetched_collection = @collection_builder.collection_from_datastring(data)
 
                     local_collection_path = @project.path_for_collection(generated_collection.name, lang)
                     local_collection = @collection_builder.collection_at_path(local_collection_path)
 
                     # 2
-                    print "[*] merge: onesky -> #{lang}/#{generated_collection.name}.strings\n"
+                    print "[*] merge: onesky -> #{lang}/#{generated_collection.name}\n"
                     @collection_merger.merge(fetched_collection, local_collection, CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_UPDATE)
                     @collection_writer.write_to_path(local_collection, local_collection_path)
                 end
@@ -68,7 +68,7 @@ module Locca
             # 3
             @generated_collections.each do |generated_collection|
                 @langs.each do |lang|
-                    print "[*] merge: code -> #{lang}/#{generated_collection.name}.strings\n"
+                    print "[*] merge: code -> #{lang}/#{generated_collection.name}\n"
 
                     collection_path = @project.path_for_collection(generated_collection.name, lang)
                     collection = @collection_builder.collection_at_path(collection_path)
@@ -79,9 +79,9 @@ module Locca
 
             # 4
             @generated_collections.each do |generated_collection|
-                print "[*] upload: #{@project.base_lang}/#{generated_collection.name}.strings\n"
+                print "[*] upload: #{@project.base_lang}/#{generated_collection.name}\n"
                 collection_path = @project.path_for_collection(generated_collection.name, @project.base_lang())
-                @onesky.upload_file(collection_path)
+                @onesky.upload_file(collection_path, @project.one_sky_file_format)
             end
         end
     end

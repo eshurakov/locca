@@ -21,6 +21,58 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+
 module Locca
-  VERSION = '0.9.5'
+    class Project
+        attr_reader :dir
+        attr_reader :lang_dir
+        
+        attr_reader :base_lang
+
+        def initialize(dir, config)
+            @dir = dir
+            @config = config
+            
+            @lang_dir = File.join(dir, config['lang_dir'])
+            
+            @base_lang = config['base_lang']
+        end
+
+        def config_value_for_key(key)
+            return @config[key]
+        end
+
+        def langs
+            # implement in subclass
+        end
+
+        def collection_names
+            # implement in subclass 
+        end
+
+        def full_collection_name(collection_name)
+           # implement in subclass
+        end
+
+        def path_for_collection(collection_name, lang)
+            # implement in subclass
+        end
+
+        def collection_builder
+            # implement in subclass
+        end
+
+        def collection_writer
+            # implement in subclass
+        end
+
+        def collections_generator
+            # implement in subclass
+        end
+
+        def one_sky_file_format
+            # implement in subclass
+        end
+
+    end
 end

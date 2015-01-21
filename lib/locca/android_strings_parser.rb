@@ -1,7 +1,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2014 Evgeny Shurakov
+# Copyright (c) 2015 Evgeny Shurakov
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+
+require 'nokogiri'
+
 module Locca
-  VERSION = '0.9.5'
+
+	class AndroidStringsParser
+
+        def initialize()
+        	
+        end
+
+	    def parse(str, &block)
+			doc = Nokogiri::XML(str)
+			comment = nil
+
+			for node in doc.root.children
+				if node.comment?
+					comment = node.text.strip
+				elsif node.element? && node.name == "string"
+					block.call(node["name"], node.text, comment)
+					comment = nil
+				end
+			end
+	    end
+	end
+	
 end

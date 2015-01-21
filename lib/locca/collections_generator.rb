@@ -24,14 +24,15 @@
 
 module Locca
     class CollectionsGenerator
-        def initialize(genstrings, collection_builder)
+        def initialize(project, genstrings, collection_builder)
+            @project = project
             @genstrings = genstrings
             @collection_builder = collection_builder
         end
 
-        def generate(code_dir)
+        def generate()
             result = Array.new()
-            @genstrings.generate(code_dir) do |filepath|
+            @genstrings.generate(@project.code_dir) do |filepath|
                 collection = @collection_builder.collection_at_path(filepath)
                 result.push(collection)
             end

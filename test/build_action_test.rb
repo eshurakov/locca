@@ -21,7 +21,7 @@ end
 
 def test_action
     collection_name = 'Localizable'
-
+    
     generated_collection = mock('generated_collection')
     generated_collection.stubs(:name).returns(collection_name)
 
@@ -34,7 +34,7 @@ def test_action
     @project.stubs(:langs).returns(langs)
     
     generated_collections = [generated_collection]
-    @collections_generator.expects(:generate).with(code_dir).returns(generated_collections)
+    @collections_generator.expects(:generate).returns(generated_collections)
 
     langs.each do |lang|
         collection_path = "#{lang_dir}/#{lang}.lproj/#{collection_name}.strings"

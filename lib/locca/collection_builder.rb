@@ -36,7 +36,7 @@ module Locca
 
             @file_manager.open(path, 'rb:BOM|UTF-8:UTF-8') do |file|
                 collection = collection_from_datastring(file.read())
-                collection.name = File.basename(path, '.strings')
+                collection.name = File.basename(path, File.extname(path))
             end
 
             return collection

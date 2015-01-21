@@ -1,4 +1,4 @@
-require 'locca/project_factory'
+require 'locca/projects/project_factory'
 require 'minitest/autorun'
 
 class ProjectFactoryTest < MiniTest::Test
@@ -11,9 +11,8 @@ def setup
     @project_dir_locator.expect(:config_path, @config_path, [@dir])
 
     @config_reader = MiniTest::Mock.new()
-    @config_validator = MiniTest::Mock.new()
-
-    @factory = Locca::ProjectFactory.new(@project_dir_locator, @config_reader, @config_validator)
+    
+    @factory = Locca::ProjectFactory.new(@project_dir_locator, @config_reader)
 end
 
 def test_project_is_created_and_configured
@@ -25,7 +24,6 @@ def test_project_is_created_and_configured
         'base_lang' => 'en'
     }
     @config_reader.expect(:read, config, [@config_path])
-    @config_validator.expect(:validate, true, [config])
 
     project = @factory.new_project(@dir)
     assert(project, 'project is nil')
@@ -55,16 +53,16 @@ def test_raises_no_config
     }
 end
 
-def test_raises_bad_config
-    config = {}
+# def test_raises_bad_config
+#     config = {}
 
-    @project_dir_locator.expect(:locate, @dir, [@dir])
-    @config_reader.expect(:read, config, [@config_path])
-    @config_validator.expect(:validate, false, [config])
+#     @project_dir_locator.expect(:locate, @dir, [@dir])
+#     @config_reader.expect(:read, config, [@config_path])
+#     @config_validator.expect(:validate, false, [config])
 
-    assert_raises(Locca::ConfigNotValidError) {
-        project = @factory.new_project(@dir)
-    }
-end
+#     assert_raises(Locca::ConfigNotValidError) {
+#         project = @factory.new_project(@dir)
+#     }
+# end
 
 end

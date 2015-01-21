@@ -24,9 +24,11 @@
 
 require 'locca/version'
 
-require 'locca/project'
-require 'locca/project_dir_locator'
-require 'locca/project_factory'
+require 'locca/projects/project_dir_locator'
+require 'locca/projects/project_factory'
+require 'locca/projects/project'
+require 'locca/projects/xcode_project'
+require 'locca/projects/android_project'
 
 require 'locca/config_reader'
 require 'locca/config_validator'
@@ -44,6 +46,10 @@ require 'locca/collection_builder'
 require 'locca/collection_writer'
 require 'locca/collection_item_condensed_formatter'
 require 'locca/collection_item_default_formatter'
+
+require 'locca/android_collection_writer'
+require 'locca/android_collections_generator'
+require 'locca/android_strings_parser'
 
 require 'locca/genstrings'
 
@@ -90,36 +96,18 @@ module Locca
                 lang = project.base_lang
             end
 
-            collection_builder = collection_builder()
-            action = TranslateAction.new(project, lang, collection_builder, collection_writer(), collection_merger())
+            action = TranslateAction.new(project, lang, project.collection_builder, project.collection_writer, collection_merger())
             action.execute()
         end
 
         def build_action(project)
-            genstrings = Genstrings.new()
-            collection_builder = collection_builder()
-            collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
-
-            return BuildAction.new(project, collection_builder, collection_writer(), collections_generator, collection_merger())
+            return BuildAction.new(project, project.collection_builder(), project.collection_writer(), project.collections_generator(), collection_merger())
         end
 
         def one_sky_action(project)
-            genstrings = Genstrings.new()
-            collection_builder = collection_builder()
-            collections_generator = CollectionsGenerator.new(genstrings, collection_builder)
-
             onesky = Onesky.new(project.config_value_for_key('onesky_project_id'), project.config_value_for_key('onesky_public_key'), project.config_value_for_key('onesky_secret_key'))
 
-            return OneskySyncAction.new(project, onesky, collection_builder(), collection_writer(), collections_generator, collection_merger())
-        end
-
-        def collection_builder()
-            parser = Babelyoda::StringsParser.new(Babelyoda::StringsLexer.new())
-            return CollectionBuilder.new(File, parser) 
-        end
-
-        def collection_writer()
-            return CollectionWriter.new(File, CollectionItemDefaultFormatter.new())
+            return OneskySyncAction.new(project, onesky, project.collection_builder(), project.collection_writer(), project.collections_generator(), collection_merger())
         end
 
         def collection_merger()
