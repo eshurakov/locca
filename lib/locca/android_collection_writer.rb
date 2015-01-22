@@ -50,10 +50,24 @@ module Locca
 					resources.add_child(Nokogiri::XML::Comment.new(document, " #{item.comment} "))
 				end
 
-				string = Nokogiri::XML::Node.new('string', document)
-				string["name"] = item.key
-				string.content = item.value
-				resources.add_child(string)
+                if item.plural?
+                    node = Nokogiri::XML::Node.new('plurals', document)
+                    node["name"] = item.key
+
+                    item.value.each do |key, value|
+                        nodeItem = Nokogiri::XML::Node.new('item', document)
+                        nodeItem["quantity"] = key
+                        nodeItem.content = value
+                        node.add_child(nodeItem)
+                    end
+
+                    resources.add_child(node)
+                else
+                    node = Nokogiri::XML::Node.new('string', document)
+                    node["name"] = item.key
+                    node.content = item.value
+                    resources.add_child(node)
+                end
 	        end
 
             document.root = resources

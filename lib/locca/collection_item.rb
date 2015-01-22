@@ -46,7 +46,15 @@ module Locca
             end
         end
 
+        def plural?
+            return @value.is_a?(Hash)
+        end
+
         def translated?
+            if plural?
+                return true
+            end
+
             value = nil
             if @value
                 value = @value.gsub(/%\d+\$/, "%")

@@ -39,9 +39,18 @@ module Locca
 			for node in doc.root.children
 				if node.comment?
 					comment = node.text.strip
-				elsif node.element? && node.name == "string"
-					block.call(node["name"], node.text, comment)
-					comment = nil
+				elsif node.element? 
+					if node.name == "string"
+						block.call(node["name"], node.text, comment)
+						comment = nil
+					elsif node.name == "plurals"
+						values = Hash.new()
+						for pluralItem in node.xpath('.//item')
+							values[pluralItem["quantity"]] = pluralItem.text
+						end
+						block.call(node["name"], values, comment)
+						comment = nil
+					end
 				end
 			end
 	    end
