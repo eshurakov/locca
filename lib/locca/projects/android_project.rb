@@ -26,6 +26,7 @@ require_relative 'project'
 
 module Locca
     class AndroidProject < Project
+        MAIN_COLLECTION_NAME = 'strings'
 
         def initialize(dir, config)
         	super(dir, config)
@@ -36,7 +37,9 @@ module Locca
             result.add(self.base_lang)
 
             Dir.glob(File.join(@lang_dir, 'values-*')) do |filepath|
-            	result.add(File.basename(filepath).split('-', 2).last) 
+                if (File.exist?(File.join(filepath, "#{MAIN_COLLECTION_NAME}.xml")))
+                    result.add(File.basename(filepath).split('-', 2).last) 
+                end
             end
 
             return result
@@ -44,7 +47,7 @@ module Locca
 
         def collection_names
             result = Set.new()
-            result.add('strings');
+            result.add(MAIN_COLLECTION_NAME);
             return result 
         end
 
