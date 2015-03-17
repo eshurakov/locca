@@ -42,7 +42,7 @@ module Locca
                 langs.each do |lang|
                     collection_path = @project.path_for_collection(generated_collection.name, lang)
                     collection = @collection_builder.collection_at_path(collection_path)
-                    @collection_merger.merge(generated_collection, collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_DELETE))
+                    @collection_merger.merge(generated_collection, collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_DELETE | CollectionMerger::ACTION_UPDATE_COMMENTS))
                     @collection_writer.write_to_path(collection, collection_path)
                 end
             end
