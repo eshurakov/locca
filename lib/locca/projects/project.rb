@@ -42,6 +42,16 @@ module Locca
             return @config[key]
         end
 
+        def prevent_sync_without_comments?
+            value = @config['prevent_sync_without_comments']
+            if value == true ||
+                value == 1
+                return true
+            else
+                return false
+            end
+        end
+
         def langs
             # implement in subclass
         end

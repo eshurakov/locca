@@ -24,9 +24,10 @@
 
 module Locca
     class CollectionMerger
-        ACTION_ADD          = (1 << 0)
-        ACTION_DELETE       = (1 << 1)
-        ACTION_UPDATE       = (1 << 2)
+        ACTION_ADD              = (1 << 0)
+        ACTION_DELETE           = (1 << 1)
+        ACTION_UPDATE           = (1 << 2)
+        ACTION_UPDATE_COMMENTS  = (1 << 3)
         
         def merge(src_collection, dst_collection, actions = (ACTION_ADD | ACTION_DELETE))
             if not src_collection or not dst_collection
@@ -45,6 +46,9 @@ module Locca
                     dst_collection.add_item(src_item.dup)
                 elsif (actions & ACTION_UPDATE) != 0 && dst_item
                     dst_collection.add_item(src_item.dup)
+                elsif (actions & ACTION_UPDATE_COMMENTS) != 0 && dst_item
+                    item = CollectionItem.new(dst_item.key, dst_item.value, src_item.comment)
+                    dst_collection.add_item(item)
                 end
 
                 if dst_keys

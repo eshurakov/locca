@@ -110,7 +110,9 @@ end
 on_error do |exception|
     # Error logic here
     # return false to skip default error handling
-    puts exception.backtrace
+    if ENV["LOCCA_DEBUG"]
+        puts exception.backtrace
+    end
     true
 end
 

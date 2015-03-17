@@ -56,6 +56,16 @@ module Locca
             return @items.keys
         end
 
+        def keys_without_comments
+            result = []
+            @items.each do |key, item|
+                if item.comment == nil || item.comment.strip.length == 0
+                    result.push(key)
+                end
+            end
+            return result
+        end
+
         def translated?
             @items.each do |key, item|
                 if !item.translated?

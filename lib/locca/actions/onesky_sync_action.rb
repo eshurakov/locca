@@ -70,10 +70,26 @@ module Locca
                 @langs.each do |lang|
                     print "[*] merge: code -> #{lang}/#{generated_collection.name}\n"
 
-                    collection_path = @project.path_for_collection(generated_collection.name, lang)
-                    collection = @collection_builder.collection_at_path(collection_path)
-                    @collection_merger.merge(generated_collection, collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_DELETE))
-                    @collection_writer.write_to_path(collection, collection_path)
+                    local_collection_path = @project.path_for_collection(generated_collection.name, lang)
+                    local_collection = @collection_builder.collection_at_path(local_collection_path)
+                    @collection_merger.merge(generated_collection, local_collection, (CollectionMerger::ACTION_ADD | CollectionMerger::ACTION_DELETE | CollectionMerger::ACTION_UPDATE_COMMENTS))
+
+                    @collection_writer.write_to_path(local_collection, local_collection_path)
+                end
+            end
+
+            if @project.prevent_sync_without_comments?                    
+                lang = @project.base_lang
+                @generated_collections.each do |generated_collection|
+                    print "[*] check: #{lang}/#{generated_collection.name}\n"
+
+                    local_collection_path = @project.path_for_collection(generated_collection.name, lang)
+                    local_collection = @collection_builder.collection_at_path(local_collection_path)                
+
+                    keys = local_collection.keys_without_comments
+                    if keys.length > 0
+                        raise "Keys without comments:\n" + keys.join("\n")
+                    end
                 end
             end
 
