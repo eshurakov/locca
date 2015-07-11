@@ -29,7 +29,7 @@ module Locca
     class Genstrings
         def generate(code_dir)
             Dir.mktmpdir do |tmp_dir|
-                command = "find #{code_dir} -iname \"*.m\" -or -iname \"*.mm\" -or -iname \"*.c\" | xargs genstrings -o '#{tmp_dir}'"
+                command = "find #{code_dir} -iname \"*.m\" -or -iname \"*.mm\" -or -iname \"*.c\" -or -iname \"*.swift\" | xargs genstrings -o '#{tmp_dir}'"
                 stdout, stderr, status = Open3.capture3(command)
 
                 stderr = stderr.strip
