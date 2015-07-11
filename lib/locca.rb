@@ -71,12 +71,12 @@ module Locca
             action.execute()
         end
 
-        def sync(project)
+        def sync(project, prune_missing_strings = false)
             if not project
                 raise 'Can\'t initialize Locca with nil project'
             end
             
-            one_sky_action(project).sync()
+            one_sky_action(project).sync(prune_missing_strings)
         end
 
         def fetch(project)

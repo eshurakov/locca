@@ -62,7 +62,7 @@ module Locca
             end
         end
 
-        def sync()
+        def sync(prune_missing_strings = false)
             fetch()
 
             # 3
@@ -97,7 +97,7 @@ module Locca
             @generated_collections.each do |generated_collection|
                 print "[*] upload: #{@project.base_lang}/#{generated_collection.name}\n"
                 collection_path = @project.path_for_collection(generated_collection.name, @project.base_lang())
-                @onesky.upload_file(collection_path, @project.one_sky_file_format)
+                @onesky.upload_file(collection_path, @project.one_sky_file_format, prune_missing_strings)
             end
         end
     end

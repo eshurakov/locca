@@ -62,13 +62,16 @@ end
 
 desc 'Sync (fetch, merge and upload new) translations with external translation service'
 command :sync do |c|
+    c.desc 'Prune missing strings from external service'
+    c.switch :prune, :negatable => false
+
     c.action do |global_options, options, args|
         work_dir = global_options['work-dir'.to_sym]
         if not work_dir
             work_dir = Dir.getwd
         end
 
-        $locca.sync(project_in_dir(work_dir))
+        $locca.sync(project_in_dir(work_dir), options[:prune])
     end  
 end
 
