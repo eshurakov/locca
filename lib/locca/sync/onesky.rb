@@ -34,8 +34,8 @@ module Locca
             @secret_key = secret_key
         end
 
-        def upload_file(file_path, file_format)
-            fetch_response(:post, "files", {'file' => File.new(file_path), 'file_format' => file_format, 'is_keeping_all_strings' => 'false'})
+        def upload_file(file_path, file_format, deprecate_missing_strings = false)
+            fetch_response(:post, "files", {'file' => File.new(file_path), 'file_format' => file_format, 'is_keeping_all_strings' => !deprecate_missing_strings})
         end
 
         def fetch_translations(lang, file_name)
