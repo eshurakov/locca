@@ -45,7 +45,7 @@ def test_action
         @collection_writer.expects(:write_to_path).with(collection, collection_path)
         @collection_builder.expects(:collection_at_path).with(collection_path).returns(collection)
 
-        @collection_merger.expects(:merge).with(generated_collection, collection, (Locca::CollectionMerger::ACTION_ADD | Locca::CollectionMerger::ACTION_DELETE))
+        @collection_merger.expects(:merge).with(generated_collection, collection, (Locca::CollectionMerger::ACTION_ADD | Locca::CollectionMerger::ACTION_DELETE | Locca::CollectionMerger::ACTION_UPDATE_COMMENTS))
     end
 
     @action.execute()
