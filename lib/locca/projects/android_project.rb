@@ -28,8 +28,15 @@ module Locca
     class AndroidProject < Project
         MAIN_COLLECTION_NAME = 'strings'
 
+        attr_reader :lang_dir
+
         def initialize(dir, config)
         	super(dir, config)
+            @lang_dir = File.join(dir, config['lang_dir'])
+        end
+
+        def name
+            return "Android"
         end
 
         def langs

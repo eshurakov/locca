@@ -21,12 +21,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-require 'yaml'
+require 'json'
 
 module Locca
     class ConfigReader
         def read(path)
-            return YAML.load_file(path)
+            return JSON.parse(IO.read(path))
         end
     end
 end

@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+require 'xcodeproj'
 require_relative 'xcode_project'
 
 module Locca
@@ -40,7 +41,7 @@ module Locca
             @config_reader = config_reader
         end
 
-        def new_project(project_dir)
+        def all_projects(project_dir)
             project_dir = @project_dir_locator.locate(project_dir)
             if not project_dir
                 raise ProjectNotFoundError, 'Can\'t find .locca dir (also checked parent dirs)'
@@ -51,12 +52,23 @@ module Locca
                 raise ConfigNotFoundError, 'Can\'t find .locca/config'
             end
 
-            if Dir.glob("#{project_dir}/**/AndroidManifest.xml").length > 0
-                return AndroidProject.new(project_dir, config)
+            results = Array.new()
+
+            if config["project_file"]
+                project = Xcodeproj::Project.open(File.join(project_dir, config["project_file"]))
+                config["targets"].each { |target_name, target_config|  
+                    project.native_targets().each { |target|  
+                        if target.name == target_name
+                            merged_config = config.merge(target_config)
+                            results.push(XcodeProject.new(project_dir, target, merged_config))
+                        end
+                    }
+                }
             else
-                return XcodeProject.new(project_dir, config)
+                results.push(AndroidProject.new(project_dir, config))
             end
-                        
+
+            return results         
         end
 
     end

@@ -1,15 +1,23 @@
 PATH
   remote: .
   specs:
-    locca (0.9.5)
+    locca (2.0.0)
       gli
+      json
       nokogiri
       rest-client
+      xcodeproj
 
 GEM
   remote: https://rubygems.org/
   specs:
+    activesupport (3.2.20)
+      i18n (~> 0.6, >= 0.6.4)
+      multi_json (~> 1.0)
+    claide (0.9.1)
+    colored (1.2)
     gli (2.12.2)
+    i18n (0.7.0)
     json (1.8.2)
     metaclass (0.0.4)
     mime-types (2.4.3)
@@ -17,6 +25,7 @@ GEM
     minitest (5.5.1)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
+    multi_json (1.10.1)
     netrc (0.10.2)
     nokogiri (1.6.5)
       mini_portile (~> 0.6.0)
@@ -26,11 +35,16 @@ GEM
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    xcodeproj (0.26.3)
+      activesupport (>= 3)
+      claide (~> 0.9.1)
+      colored (~> 1.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  json
   locca!
   minitest
   mocha
@@ -38,3 +52,4 @@ DEPENDENCIES
   rake
   rdoc
   rest-client
+  xcodeproj

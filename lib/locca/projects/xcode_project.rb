@@ -22,31 +22,41 @@
 # SOFTWARE.
 #
 
+require 'xcodeproj'
 require_relative 'project'
 
 module Locca
     class XcodeProject < Project
-        attr_reader :code_dir
+        attr_reader :langs
 
-        def initialize(dir, config)
+        def initialize(dir, xcode_target, config)
         	super(dir, config)
-            @code_dir = File.join(dir, config['code_dir'])
+            @xcode_target = xcode_target
+
+            @files = Array.new()
+            @langs = Set.new()
+
+            @xcode_target.resources_build_phase.files_references.each { |file|  
+                if file.display_name.end_with?(".strings") && file.is_a?(Xcodeproj::Project::Object::PBXVariantGroup)
+                    @files.push(file)
+                    if file.display_name == "Localizable.strings"
+                        file.files.each { |variant_file|  
+                            @langs.add(variant_file.name)
+                        }
+                    end
+                end
+            }
         end
 
-        def langs
-            result = Set.new()
-            Dir.glob(File.join(@lang_dir, '*.lproj')) do |filepath|
-                result.add(File.basename(filepath, '.lproj'))
-            end
-
-            return result
+        def name
+            return @xcode_target.name
         end
 
         def collection_names
             result = Set.new()
-            Dir.glob(File.join(@lang_dir, "#{@base_lang}.lproj", '*.strings')) do |filepath|
-                result.add(File.basename(filepath, '.strings'))
-            end
+            @files.each { |file|  
+                result.add(File.basename(file.display_name, '.strings'))
+            }
 
             return result 
         end
@@ -56,7 +66,18 @@ module Locca
         end
 
         def path_for_collection(collection_name, lang)
-            return File.join(@lang_dir, "#{lang}.lproj", "#{collection_name}.strings")
+            collection_name = "#{collection_name}.strings"
+            @files.each { |file|  
+                if file.display_name == collection_name
+                    file.files.each { |variant_file|  
+                        if variant_file.name == lang
+                            return variant_file.real_path
+                        end
+                    }
+                end
+            }
+
+            return nil
         end
 
 		def collection_builder()
@@ -69,7 +90,11 @@ module Locca
         end
 
         def collections_generator()
-            return CollectionsGenerator.new(self, Genstrings.new(), collection_builder())
+            source_files = Array.new()
+            @xcode_target.source_build_phase.files_references.each { |file|  
+                source_files.push(file.real_path.to_s)
+            }
+            return CollectionsGenerator.new(source_files, Genstrings.new(), collection_builder())
         end
 
         def one_sky_file_format

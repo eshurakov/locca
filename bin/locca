@@ -46,7 +46,10 @@ command :build do |c|
             work_dir = Dir.getwd
         end
 
-        $locca.build(project_in_dir(work_dir))
+        projects_in_dir(work_dir).each { |project|  
+            $locca.build(project)
+        }
+        
     end
 end
 
@@ -71,7 +74,10 @@ command :sync do |c|
             work_dir = Dir.getwd
         end
 
-        $locca.sync(project_in_dir(work_dir), options[:prune])
+        projects_in_dir(work_dir).each { |project|  
+            $locca.sync(project, options[:prune])
+        }
+        
     end  
 end
 
@@ -83,7 +89,9 @@ command :fetch do |c|
             work_dir = Dir.getwd
         end
 
-        $locca.fetch(project_in_dir(work_dir))
+        projects_in_dir(work_dir).each { |project|  
+            $locca.fetch(project)
+        }
     end  
 end
 
@@ -95,7 +103,9 @@ command :translate do |c|
             work_dir = Dir.getwd
         end
 
-        $locca.translate(project_in_dir(work_dir), args[0])
+        projects_in_dir(work_dir).each { |project|  
+            $locca.translate(project, args[0])
+        }
     end  
 end
 
@@ -119,12 +129,12 @@ on_error do |exception|
     true
 end
 
-def project_in_dir(dir)
+def projects_in_dir(dir)
     project_dir_locator = Locca::ProjectDirLocator.new()
     config_reader = Locca::ConfigReader.new()
     project_factory = Locca::ProjectFactory.new(project_dir_locator, config_reader)
 
-    project = project_factory.new_project(dir)
+    return project_factory.all_projects(dir)
 end
 
 exit run(ARGV)

@@ -25,16 +25,12 @@
 module Locca
     class Project
         attr_reader :dir
-        attr_reader :lang_dir
-        
         attr_reader :base_lang
 
         def initialize(dir, config)
             @dir = dir
             @config = config
-            
-            @lang_dir = File.join(dir, config['lang_dir'])
-            
+                        
             @base_lang = config['base_lang']
         end
 
@@ -82,6 +78,10 @@ module Locca
 
         def one_sky_file_format
             # implement in subclass
+        end
+
+        def name
+            return ""
         end
 
     end
