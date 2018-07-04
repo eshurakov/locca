@@ -57,7 +57,7 @@ module Locca
                     item.value.each do |key, value|
                         nodeItem = Nokogiri::XML::Node.new('item', document)
                         nodeItem["quantity"] = key
-                        nodeItem.content = value
+                        nodeItem.content = prepare_content(value)
                         node.add_child(nodeItem)
                     end
 
@@ -65,7 +65,7 @@ module Locca
                 else
                     node = Nokogiri::XML::Node.new('string', document)
                     node["name"] = item.key
-                    node.content = item.value
+                    node.content = prepare_content(item.value)
                     resources.add_child(node)
                 end
 	        end
@@ -75,6 +75,10 @@ module Locca
             @file_manager.open(filepath, "w") do |io|
                 io << document.to_xml
             end
+        end
+
+        def prepare_content(content)
+            return content.gsub(/\n/, "\\n")
         end
     end
 
