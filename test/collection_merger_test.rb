@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require 'mocha/mini_test'
+require 'mocha/minitest'
 
 require 'locca/collection'
 require 'locca/collection_item'

@@ -1,6 +1,6 @@
 require 'locca/collections_generator'
 require 'minitest/autorun'
-require 'mocha/mini_test'
+require 'mocha/minitest'
 
 class CollectionsGeneratorTest < MiniTest::Test
 

@@ -1,7 +1,7 @@
 require 'locca/actions/build_action'
 require 'locca/collection_merger'
 require 'minitest/autorun'
-require 'mocha/mini_test'
+require 'mocha/minitest'
 
 
 class BuildActionTest < MiniTest::Test
