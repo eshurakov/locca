@@ -41,6 +41,24 @@ module Locca
 
             @langs = @project.langs()
             @generated_collections = @collections_generator.generate()
+
+            @project.collection_names.each do |collection_name|
+                existing_collection = nil
+
+                @generated_collections.each do |generated_collection|
+                    if generated_collection.name == collection_name
+                        existing_collection = generated_collection
+                        break
+                    end
+                end
+
+                if existing_collection == nil 
+                    collection_path = @project.path_for_collection(collection_name, @project.base_lang)
+                    collection = @collection_builder.collection_at_path(collection_path)
+                    @generated_collections.push(collection)
+                end
+            end
+
         end 
 
         def fetch()
