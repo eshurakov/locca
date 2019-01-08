@@ -109,6 +109,24 @@ command :translate do |c|
     end  
 end
 
+desc 'Audit translation (find missing / extra / untranslated keys)'
+command :audit do |c|
+    c.action do |global_options, options, args|
+        work_dir = global_options['work-dir'.to_sym]
+        if not work_dir
+            work_dir = Dir.getwd
+        end
+
+        success = true
+        projects_in_dir(work_dir).each { |project|  
+            if !$locca.audit(project)
+                success = false
+            end
+        }
+        exit!(success)
+    end
+end
+
 pre do |global, command, options, args|
     $locca = Locca::Locca.new()
     true

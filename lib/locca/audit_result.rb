@@ -21,6 +21,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+
 module Locca
-  VERSION = '2.2.2'
+    class AuditResult
+        attr_reader :collection_name
+        attr_reader :lang
+        attr_reader :untranslated_keys
+        attr_accessor :missing_keys
+        attr_accessor :extra_keys
+
+        def initialize(collection_name, lang)
+            @collection_name = collection_name 
+            @lang = lang
+            @untranslated_keys = []
+            @missing_keys = []
+            @extra_keys = []
+        end
+
+        def add_untranslated_key(value)
+            @untranslated_keys.push(value)
+        end
+
+        def passed?
+            return @untranslated_keys.empty? && @missing_keys.empty? && @extra_keys.empty?
+        end
+    end
 end

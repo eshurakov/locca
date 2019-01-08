@@ -33,6 +33,7 @@ require 'locca/projects/android_project'
 require 'locca/config_reader'
 require 'locca/config_validator'
 
+require 'locca/actions/audit_action'
 require 'locca/actions/build_action'
 require 'locca/actions/merge_action'
 require 'locca/actions/onesky_sync_action'
@@ -58,6 +59,42 @@ require 'babelyoda/strings_parser'
 
 module Locca
     class Locca
+        def audit(project)
+            if not project
+                raise 'Can\'t initialize Locca with nil project'
+            end
+
+            action = AuditAction.new(project, project.collection_builder(), project.collections_generator())
+            failed_audit_results = action.execute()
+
+            failed_audit_results.each do |audit_result|
+                puts()
+                puts(">>> #{project.name}/#{audit_result.lang}/#{audit_result.collection_name}")
+                unless audit_result.missing_keys.empty?
+                    puts("Missing Keys:")
+                    audit_result.missing_keys.each do |key|
+                        puts("- #{key}")
+                    end
+                end
+
+                unless audit_result.extra_keys.empty?
+                    puts("Extra Keys:")
+                    audit_result.extra_keys.each do |key|
+                        puts("- #{key}")
+                    end
+                end
+
+                unless audit_result.untranslated_keys.empty?
+                    puts("Untranslated:")
+                    audit_result.untranslated_keys.each do |key|
+                        puts("- #{key}")
+                    end
+                end
+            end
+
+            return failed_audit_results.empty?
+        end
+
         def build(project)
             if not project
                 raise 'Can\'t initialize Locca with nil project'
@@ -96,7 +133,7 @@ module Locca
                 lang = project.base_lang
             end
 
-            action = TranslateAction.new(project, lang, project.collection_builder, project.collection_writer, collection_merger())
+            action = TranslateAction.new(project, lang, project.collection_builder(), project.collection_writer(), collection_merger())
             action.execute()
         end
 
