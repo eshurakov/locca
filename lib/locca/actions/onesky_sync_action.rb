@@ -65,8 +65,22 @@ module Locca
             # 1
             @generated_collections.each do |generated_collection|
                 @langs.each do |lang|
-                    print "[*] #{@project.name}: fetch: #{lang}/#{generated_collection.name}\n"
-                    data = @onesky.fetch_translations(lang, @project.full_collection_name(generated_collection.name))
+                    max_attempts = 3
+                    for attempt in 1..max_attempts do
+                        print "[*] #{@project.name}: fetch: #{lang}/#{generated_collection.name}\n"
+                        begin
+                            data = @onesky.fetch_translations(lang, @project.full_collection_name(generated_collection.name))
+                        rescue Exception => ex
+                            if attempt == max_attempts
+                                raise ex
+                            end
+                            puts "[!] #{ex}"
+                            sleep 2
+                        else 
+                            break
+                        end
+                    end
+                    
                     fetched_collection = @collection_builder.collection_from_datastring(data)
 
                     local_collection_path = @project.path_for_collection(generated_collection.name, lang)
@@ -113,9 +127,24 @@ module Locca
 
             # 4
             @generated_collections.each do |generated_collection|
-                print "[*] #{@project.name}: upload: #{@project.base_lang}/#{generated_collection.name}\n"
                 collection_path = @project.path_for_collection(generated_collection.name, @project.base_lang())
-                @onesky.upload_file(collection_path, @project.one_sky_file_format, prune_missing_strings)
+
+                max_attempts = 3
+                for attempt in 1..max_attempts do
+                    print "[*] #{@project.name}: upload: #{@project.base_lang}/#{generated_collection.name}\n"
+                    begin    
+                        @onesky.upload_file(collection_path, @project.one_sky_file_format, prune_missing_strings)
+                    rescue Exception => ex
+                        if attempt == max_attempts
+                            raise ex
+                        end
+                        puts "[!] #{ex}"
+                        sleep 2
+                    else 
+                        break
+                    end
+                end
+                
             end
         end
     end
