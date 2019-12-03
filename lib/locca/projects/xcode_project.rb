@@ -91,8 +91,10 @@ module Locca
 
         def collections_generator()
             source_files = Array.new()
-            @xcode_target.source_build_phase.files_references.each { |file|  
-                source_files.push(file.real_path.to_s)
+            @xcode_target.source_build_phase.files_references.each { |file| 
+                if !file.path.nil?
+                    source_files.push(file.real_path.to_s)
+                end
             }
             return CollectionsGenerator.new(source_files, Genstrings.new(), collection_builder())
         end
