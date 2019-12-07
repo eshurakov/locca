@@ -11,7 +11,6 @@ spec = Gem::Specification.new do |s|
   s.summary = 'Application localization kit'
   s.files = Dir.glob("{bin,lib}/**/*")
   s.require_paths << 'lib'
-  s.has_rdoc = true
   s.extra_rdoc_files = ['README.rdoc']
   s.bindir = 'bin'
   s.executables << 'locca'
