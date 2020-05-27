@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    locca (2.2.5)
+    locca (2.2.6)
       gli (~> 2.0, >= 2.0)
       json (~> 2.1, >= 2.1)
       nokogiri (~> 1.8, >= 1.8)
@@ -64,4 +64,4 @@ DEPENDENCIES
   xcodeproj
 
 BUNDLED WITH
-   1.17.2
+   2.1.4

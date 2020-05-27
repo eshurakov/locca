@@ -25,11 +25,11 @@ def test_project_is_created_and_configured
     }
     @config_reader.expect(:read, config, [@config_path])
 
-    project = @factory.new_project(@dir)
+    projects = @factory.all_projects(@dir)
+    assert_equal(projects.length(), 1)
+    project = projects[0]
     assert(project, 'project is nil')
     assert_equal(@dir, project.dir)
-    assert_equal(File.join(@dir, 'Classes'), project.code_dir)
-    assert_equal(File.join(@dir, 'Localization'), project.lang_dir)
     assert_equal('en', project.base_lang)
 
     @project_dir_locator.verify
@@ -40,7 +40,7 @@ def test_raises_bad_dir
     @project_dir_locator.expect(:locate, nil, [@dir])
 
     assert_raises(Locca::ProjectNotFoundError) {
-        project = @factory.new_project(@dir)
+        project = @factory.all_projects(@dir)
     }
 end
 
@@ -49,7 +49,7 @@ def test_raises_no_config
     @config_reader.expect(:read, nil, [@config_path])
 
     assert_raises(Locca::ConfigNotFoundError) {
-        project = @factory.new_project(@dir)
+        project = @factory.all_projects(@dir)
     }
 end
 
